@@ -1,0 +1,5 @@
+# Force LF for all files
+* text=auto eol=lf
+
+# Compiled files
+*.vm -text
