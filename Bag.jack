@@ -1,0 +1,81 @@
+class Bag {
+    field Array currentBag;
+    field int bagIndex;
+    field int seed;
+
+    constructor Bag new (int initSeed) {
+        let seed = initSeed;
+        let currentBag = Array.new(7);
+        let bagIndex = 7; //Force initial bag fill
+        return this;
+    }
+
+    //Fills and shuffles a new bag of blocks
+    method void fillBag() {
+        var int i,j,temp;
+
+        //Fill bag with one of each block type
+        let currentBag[0] = 0; //I
+        let currentBag[1] = 1; //J
+        let currentBag[2] = 2; //L
+        let currentBag[3] = 3; //O
+        let currentBag[4] = 4; //S
+        let currentBag[5] = 5; //T
+        let currentBag[6] = 6; //Z
+
+        /**Shuffle bag using Fisher-Yates algorithm
+        Write down numbers from 1 to N
+        Pick random number k between 1 and the number of unstruck numbers
+        Counting from the low end, strike out the kth unstruck number and write it down as next number
+        Repeat until all numbers are struck out
+        **/
+        let i = 6;
+        while (i > 0) {
+            let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //j = random int between 0 and i a%b = a-(a/b)*b
+
+            //swap i and J
+            let temp = currentBag[i];
+            let currentBag[i] = currentBag[j];
+            let currentBag[j] = temp;
+
+            //update seed for next random number
+            // Using 16-bit friendly LCG: seed = (seed * 25173 + 13849) mod 2^16
+            // 25173 and 13849 are constants that work well for 16-bit LCG
+            let seed = (seed * 25173) + 13849;
+            //let seed = (seed * 1103515245) + 12345; //1103515245 and 12345 are magic numbers from rand func in C
+            let i = i - 1;
+        }
+        let bagIndex = 0;
+        return;
+    }
+
+    //Get next block from the bag
+    method int getNextBlock() {
+        var int blockType;
+        if (bagIndex > 6) {
+            do fillBag();
+        }
+
+        let blockType = currentBag[bagIndex];
+        let bagIndex = bagIndex + 1;
+        return blockType;
+    }
+
+    //Peek at next N pieces without consuming
+    method int peek(int offset) {
+        var int realIndex;
+        let realIndex = bagIndex + offset;
+
+        if (realIndex > 6) {
+            return -1; //Error: cannot peek past end of bag
+        }
+
+        return currentBag[realIndex];
+    }
+
+    method void dispose() {
+        do currentBag.dispose(); //dispose of array
+        do Memory.deAlloc(this); //dispose of bag object
+        return;
+    }
+}

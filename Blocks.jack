@@ -1,0 +1,255 @@
+class Blocks {
+	//Block types
+	static int I, J, L, O, S, T, Z;
+
+	//Block states
+	field int type;
+	field int rotation; //0-3
+	field int x,y; //Pos on grid
+
+	constructor Blocks new (int blockType) {
+		let type = blockType;
+		let rotation = 0;
+		let x = 3;//start at top-center
+		let y = 0;
+		return this;
+	}
+
+	function void init() {
+		let I = 0;
+		let J = 1;
+		let L = 2;
+		let O = 3;
+		let S = 4;
+		let T = 5;
+		let Z = 6;
+		return;
+	}
+	
+	method Array getShape() {
+		var Array shape;
+		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
+
+		if (type = 0) { //I
+			if (rotation = 0 | rotation = 2) { //horizontal
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 2; let shape[5] = 0;
+				let shape[6] = 3; let shape[7] = 0;
+			} else { //vertical
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 0; let shape[5] = 2;
+				let shape[6] = 0; let shape[7] = 3;
+			}
+		}
+		if (type = 1) { //J
+			if (rotation = 0) {
+				//	[]
+				//	[]
+				//[][]
+				let shape[0] = 1; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 1;
+				let shape[4] = 0; let shape[5] = 2;
+				let shape[6] = 1; let shape[7] = 2;
+			} if (rotation = 1) {
+				//[]
+				//[][][]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 2; let shape[7] = 1;
+			} if (rotation = 2) {
+				//[][]
+				//[]
+				//[]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 0; let shape[5] = 1;
+				let shape[6] = 0; let shape[7] = 2;
+			} if (rotation = 3) {
+				//[][][]
+				//	  []
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 2; let shape[5] = 0;
+				let shape[6] = 2; let shape[7] = 1;
+			}
+		}
+		if (type = 2) { //L
+			//Similar to J but mirrored
+			if (rotation = 0) {
+				//[]
+				//[]
+				//[][]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 0; let shape[5] = 2;
+				let shape[6] = 1; let shape[7] = 2;
+			} if (rotation = 1) {
+				//[][][]
+				//[]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 2; let shape[5] = 0;
+				let shape[6] = 0; let shape[7] = 1;
+			} if (rotation = 2) {
+				//[][]
+				//  []
+				//  []
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 1; let shape[7] = 2;
+			} if (rotation = 3) {
+				//    []
+				//[][][]
+				let shape[0] = 2; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 2; let shape[7] = 1;
+			}
+		}
+		if (type = 3) { //O
+			//[][]
+			//[][]
+			let shape[0] = 0; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 0;
+			let shape[4] = 0; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 1;
+		}
+		if (type = 4) { //S
+			if (rotation = 0 | rotation = 2) {
+				//  [][]
+				//[][]
+				let shape[0] = 1; let shape[1] = 0;
+				let shape[2] = 2; let shape[3] = 0;
+				let shape[4] = 0; let shape[5] = 1;
+				let shape[6] = 1; let shape[7] = 1;
+			} else {
+				//[]
+				//[][]
+				//  []
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 1; let shape[7] = 2;
+			}
+		}
+		if (type = 5) { //T
+			if (rotation = 0) {
+				//  []
+				//[][][]
+				let shape[0] = 1; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 2; let shape[7] = 1;
+			} if (rotation = 1) {
+				//[]
+				//[][]
+				//[]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 0; let shape[7] = 2;
+			} if (rotation = 2) {
+				//[][][]
+				//  []
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 2; let shape[5] = 0;
+				let shape[6] = 1; let shape[7] = 1;
+			} if (rotation = 3) {
+				//  []
+				//[][]
+				//  []
+				let shape[0] = 1; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 1; let shape[7] = 2;
+			}
+		}
+		if (type = 6) { //Z
+			if (rotation = 0 | rotation = 2) {
+				//[][]  
+				//  [][]
+				let shape[0] = 0; let shape[1] = 0;
+				let shape[2] = 1; let shape[3] = 0;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 2; let shape[7] = 1;
+			} else {
+				//  []
+				//[][]
+				//[]
+				let shape[0] = 1; let shape[1] = 0;
+				let shape[2] = 0; let shape[3] = 1;
+				let shape[4] = 1; let shape[5] = 1;
+				let shape[6] = 0; let shape[7] = 2;
+			}
+		}
+		return shape;
+	}
+
+	method boolean isValidPosition(Grid grid) {
+		return grid.canPlaceBlock(this);
+	}
+
+	//Getters
+	method int getType() {return type;}
+	method int getRotation() {return rotation;}
+	method int getX() {return x;}
+	method int getY() {return y;}
+
+	//Movement
+	method void moveLeft() { let x = x - 1; return; }
+	method void moveRight() { let x = x + 1; return; }
+	method void moveDown() { let y = y + 1; return; }
+	method void rotate() { 
+		let rotation = (rotation + 1);  
+		if (rotation > 3){let rotation = 0;}
+		return; 
+	}
+	method void unrotate() {
+		let rotation = (rotation - 1);  
+		if (rotation < 0){let rotation = 3;}
+		return; 
+	}
+
+	method void draw(Grid grid) {
+		var Array shape;
+		var int i, cellX, cellY;
+		var int x1, y1, x2, y2;
+		var int cellSize, offsetX, offsetY;
+
+		let cellSize = grid.getCellSize();
+		let offsetX = grid.getOffsetX();
+		let offsetY = grid.getOffsetY();
+		let shape = getShape();
+		let i = 0;
+
+		do Screen.setColor(true);
+		while (i < 8) {
+			let cellX = x + shape[i];
+			let cellY = y + shape[i+1];
+
+			//calculate coords w/ offset
+			let x1 = offsetX + (cellX * cellSize);
+			let y1 = offsetY + (cellY * cellSize);
+			let x2 = x1 + cellSize - 1;
+			let y2 = y1 + cellSize - 1;
+
+			//draw filled cell
+			do Screen.drawRectangle(x1, y1, x2, y2);
+
+			let i = i + 2;
+		}
+
+		do shape.dispose();
+		return;
+	}
+
+	method void dispose() { //dispose of block on collision
+		do Memory.deAlloc(this);
+		return;
+	}
+}
