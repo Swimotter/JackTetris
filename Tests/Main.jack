@@ -1,0 +1,10 @@
+// Main entry point
+class Main {
+    function void main() {
+        var RenderTest test;
+        let test = RenderTest.new();
+        do test.run();
+        do test.dispose();
+        return;
+    }
+}
