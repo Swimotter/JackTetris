@@ -37,7 +37,6 @@ class Blocks {
 	}
 	
 	method void updateShape() {
-	method void updateShape() {
 		/*
 		4x4 grid representation for reference:
 		[][][][]
