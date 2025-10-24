@@ -1,27 +1,37 @@
 class Bag {
     field Array currentBag;
+    field Array nextBag;
     field int bagIndex;
     field int seed;
+    field boolean hasNextBag;
 
     constructor Bag new (int initSeed) {
         let seed = initSeed;
+        do MemoryTracker.allocBag();
+
         let currentBag = Array.new(7);
+        do MemoryTracker.allocArray();
+
+        let nextBag = Array.new(7);
+        do MemoryTracker.allocArray();
+
         let bagIndex = 7; //Force initial bag fill
+        let hasNextBag = false;
         return this;
     }
 
     //Fills and shuffles a new bag of blocks
-    method void fillBag() {
+    method void fillBagArray(Array bag) {
         var int i,j,temp;
 
         //Fill bag with one of each block type
-        let currentBag[0] = 0; //I
-        let currentBag[1] = 1; //J
-        let currentBag[2] = 2; //L
-        let currentBag[3] = 3; //O
-        let currentBag[4] = 4; //S
-        let currentBag[5] = 5; //T
-        let currentBag[6] = 6; //Z
+        let bag[0] = 0; //I
+        let bag[1] = 1; //J
+        let bag[2] = 2; //L
+        let bag[3] = 3; //O
+        let bag[4] = 4; //S
+        let bag[5] = 5; //T
+        let bag[6] = 6; //Z
 
         /* Shuffle bag using Fisher-Yates algorithm
         *  Write down numbers from 1 to N
@@ -34,9 +44,9 @@ class Bag {
             let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //j = random int between 0 and i a % b = a - (a / b) * b
 
             //swap i and J
-            let temp = currentBag[i];
-            let currentBag[i] = currentBag[j];
-            let currentBag[j] = temp;
+            let temp = bag[i];
+            let bag[i] = bag[j];
+            let bag[j] = temp;
 
             //update seed for next random number
             //using 16-bit friendly LCG: seed = (seed * 25173 + 13849) mod 2^16
@@ -45,15 +55,39 @@ class Bag {
             //let seed = (seed * 1103515245) + 12345; //1103515245 and 12345 are magic numbers from rand func in C
             let i = i - 1;
         }
+        return;
+    }
+
+    method void refillBag() {
+        do fillBagArray(currentBag);
         let bagIndex = 0;
+
+        if (~hasNextBag) {
+            do fillBagArray(nextBag);
+            let hasNextBag = true;
+        }
         return;
     }
 
     //Get next block from the bag
     method int getNextBlock() {
         var int blockType;
+        var Array temp;
+
         if (bagIndex > 6) {
-            do fillBag();
+            if (hasNextBag) {
+                //Swap next bag to current bag
+                let temp = currentBag;
+                let currentBag = nextBag;
+                let nextBag = temp;
+                let bagIndex = 0;
+
+                //Refill next bag
+                do fillBagArray(nextBag);
+            } else {
+                //First time filling bag
+                do refillBag();
+            }
         }
 
         let blockType = currentBag[bagIndex];
@@ -66,16 +100,32 @@ class Bag {
         var int realIndex;
         let realIndex = bagIndex + offset;
 
-        if (realIndex > 6) {
-            return -1; //Error: cannot peek past end of bag
+        //within current bag
+        if (realIndex < 7) {
+            return currentBag[realIndex];
         }
 
-        return currentBag[realIndex];
+        //within next bag
+        if (realIndex < 14) {
+            if (~hasNextBag) {
+                do fillBagArray(nextBag);
+                let hasNextBag = true;
+            }
+            return nextBag[realIndex - 7];
+        }
+        //beyond next bag
+        return -1;
     }
 
     method void dispose() {
         do currentBag.dispose(); //dispose of array
+        do MemoryTracker.freeArray();
+
+        do nextBag.dispose(); //dispose of array
+        do MemoryTracker.freeArray();
+
         do Memory.deAlloc(this); //dispose of bag object
+        do MemoryTracker.freeBag();
         return;
     }
 }
