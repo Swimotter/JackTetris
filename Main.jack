@@ -1,0 +1,16 @@
+class Main {
+    function void main() {
+        var TetrisGame game;
+        
+        do MemoryTracker.init();
+        do Blocks.init();
+        
+        let game = TetrisGame.new();
+        do game.run();
+        do game.dispose();
+        
+        do MemoryTracker.printReport();
+        
+        return;
+    }
+}

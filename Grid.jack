@@ -87,7 +87,6 @@ class Grid {
             }
             let i = i + 2; //next pair
         }
-        do shape.dispose();
         return valid;
     }
 
@@ -110,7 +109,6 @@ class Grid {
             }
             let i = i + 2; //next pair
         }
-        do shape.dispose();
         return;
     }
 
@@ -237,6 +235,11 @@ class Grid {
     method int getCellSize() {return cellSize;}
     method int getOffsetX() {return offsetX;}
     method int getOffsetY() {return offsetY;}
+
+    method void reset() {
+        do clear();
+        return;
+    }
 
     method void dispose() {
         do board.dispose();
