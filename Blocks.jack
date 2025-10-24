@@ -7,12 +7,17 @@ class Blocks {
 	field int rotation; //0-3
 	field int x,y; //Pos on grid
 	field Array shape; //store shape array as field to avoid reallocation
+	field Array shape; //store shape array as field to avoid reallocation
 
 	constructor Blocks new (int blockType) {
 		let type = blockType;
 		let rotation = 0;
 		let x = 3;//start at top-center
 		let y = 0;
+		do MemoryTracker.allocBlock();
+		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
+		do MemoryTracker.allocArray();
+		do updateShape(); //fill with intial shape
 		do MemoryTracker.allocBlock();
 		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
 		do MemoryTracker.allocArray();
@@ -31,6 +36,7 @@ class Blocks {
 		return;
 	}
 	
+	method void updateShape() {
 	method void updateShape() {
 		/*
 		4x4 grid representation for reference:
@@ -260,6 +266,7 @@ class Blocks {
 	}
 
 	//Checks
+	//Checks
 	method boolean isValidPosition(Grid grid) {
 		return grid.canPlaceBlock(this);
 	}
@@ -271,36 +278,114 @@ class Blocks {
 	method int getY() {return y;}
 	method Array getShape() {return shape;}
 
-	//Movement
-	method void moveLeft() { let x = x - 1; return; }
-	method void moveRight() { let x = x + 1; return; }
-	method void moveDown() { let y = y + 1; return; }
-	method void moveUp() { let y = y - 1; return; }
-	method void rotate() { 
+	// Erase current 4 cells - draw directly to screen
+	method void erase(Grid grid) {
+		var int i, cellX, cellY;
+		var int x1, y1, x2, y2;
+		var int cellSize, offsetX, offsetY;
+		
+		let cellSize = grid.getCellSize();
+		let offsetX = grid.getOffsetX();
+		let offsetY = grid.getOffsetY();
+		
+		let i = 0;
+		while (i < 8) { //4 pairs of (dx, dy)
+			let cellX = x + shape[i];
+			let cellY = y + shape[i + 1];
+			
+			// Only erase if within bounds and cell is empty in grid
+			if (grid.inBounds(cellX, cellY)) {
+				if (grid.isEmpty(cellX, cellY)) {
+					let x1 = offsetX + (cellX * cellSize);
+					let y1 = offsetY + (cellY * cellSize);
+					let x2 = x1 + cellSize - 1;
+					let y2 = y1 + cellSize - 1;
+					
+					do Screen.setColor(false);
+					do Screen.drawRectangle(x1, y1, x2, y2);
+				}
+			}
+			
+			let i = i + 2;
+		}
+		return;
+	}
+
+	//Movement (now erase old cells and redraw the new ones)
+	method void moveLeft(Grid grid) { 
+		do erase(grid);
+		let x = x - 1; 
+		do draw(grid);
+		return; 
+	}
+	method void moveRight(Grid grid) { 
+		do erase(grid);
+		let x = x + 1; 
+		do draw(grid);
+		return; 
+	}
+	method void moveDown(Grid grid) { 
+		do erase(grid);
+		let y = y + 1; 
+		do draw(grid);
+		return; 
+	}
+	method void moveUp(Grid grid) { 
+		do erase(grid);
+		let y = y - 1; 
+		do draw(grid);
+		return; 
+	}
+	method void rotate(Grid grid) { 
+		// erase current cells, change rotation, update shape, draw new cells
+		do erase(grid);
 		let rotation = (rotation + 1);  
 		if (rotation > 3){let rotation = 0;}
 		do updateShape();
+		do draw(grid);
 		return; 
 	}
-	method void unrotate() {
+	method void unrotate(Grid grid) {
+		do erase(grid);
 		let rotation = (rotation - 1);  
 		if (rotation < 0){let rotation = 3;}
 		do updateShape();
+		do draw(grid);
 		return; 
 	}
-	method void setPosition(int newX, int newY) {
+	method void setPosition(int newX, int newY, Grid grid) {
+		do erase(grid);
 		let x = newX;
 		let y = newY;
+		do draw(grid);
 		return;
 	}
 
 	method void draw(Grid grid) {
 		var int i, cellX, cellY;
+		var int x1, y1, x2, y2;
+		var int cellSize, offsetX, offsetY;
+		
+		let cellSize = grid.getCellSize();
+		let offsetX = grid.getOffsetX();
+		let offsetY = grid.getOffsetY();
+		
+		do Screen.setColor(true);
 		let i = 0;
 		while (i < 8) { //4 pairs of (dx, dy)
 			let cellX = x + shape[i];
 			let cellY = y + shape[i + 1];
-			do grid.drawCell(cellX, cellY, type);
+			
+			// Draw directly to screen
+			if (grid.inBounds(cellX, cellY)) {
+				let x1 = offsetX + (cellX * cellSize);
+				let y1 = offsetY + (cellY * cellSize);
+				let x2 = x1 + cellSize - 1;
+				let y2 = y1 + cellSize - 1;
+				
+				do Screen.drawRectangle(x1, y1, x2, y2);
+			}
+			
 			let i = i + 2; //next pair
 		}
 		return;

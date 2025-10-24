@@ -248,6 +248,23 @@ class Grid {
         return;
     }
 
+    method void eraseCell(int col, int row) { //erase (clear) a specific cell
+        var int x1, y1, x2, y2;
+
+        if (~inBounds(col, row)) {return;}
+
+        //calculate coords w/ offset
+        let x1 = offsetX + (col * cellSize);
+        let y1 = offsetY + (row * cellSize);
+        let x2 = x1 + cellSize - 1;
+        let y2 = y1 + cellSize - 1;
+
+        //draw empty cell
+        do Screen.setColor(false);
+        do Screen.drawRectangle(x1, y1, x2, y2);
+        return;
+    }
+
     method void drawRows(int startRow, int endRow) { //draw only specific rows (optimized for line clears)
         var int row, col, cellValue, index;
         var int x1, y1, x2, y2;
