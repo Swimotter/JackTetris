@@ -1,7 +1,9 @@
 class Grid {
     field Array board; //2D array representing grid
-    field int width, height, cellSize, offsetX, offsetY;
+    field int width, height;
     field boolean borderDrawn; //to avoid redrawing border unnecessarily
+    static int cellSize;
+    static int offsetX, offsetY;
 
     /**
      0                196px              316px            512px
@@ -23,20 +25,21 @@ class Grid {
     Grid size = 10x20 cells
 
     **/
+    function void init() {
+        let  cellSize = 12;
+        let  offsetX = 195; // (512 - (10*12)) / 2 = 196 (moved left 1 pixel for aesthetics)
+        let  offsetY = 7; // (256 - (20*12)) / 2 = 8 (moved up 1 pixel for aesthetics)
+        return;
+    }
 
     constructor Grid new (int w, int h) {
-        var int i;
         let width = w;
         let height = h;
-        let board = Array.new(width*height);
-
-        let cellSize = 12;
-        let offsetX = 196; // (512 - (10*12)) / 2 = 196
-        let offsetY = 8; // (256 - (20*12)) / 2 = 8
+        let board = Array.new(width * height);
+        let borderDrawn = false;
 
         do MemoryTracker.allocGrid();
         do MemoryTracker.allocArray();
-
         do clear();
         return this;
     }
@@ -48,7 +51,7 @@ class Grid {
 
     //bounds check
     method boolean inBounds(int x, int y) {
-        return (~(x < 0 | x > (width - 1) | y < 0 | y > (height - 1)));
+        return (~(x < 0 | x > (width - 1) | y < 0 | y > (height - 1))); //all parenthesis necessary
     }
 
     //occupancy check
@@ -100,6 +103,8 @@ class Grid {
             if (inBounds(cellX, cellY)) {
                 let index = getIndex(cellX, cellY);
                 let board[index] = blockType;
+
+                do drawCell(cellX, cellY);
             }
             let i = i + 2; //next pair
         }
@@ -147,17 +152,23 @@ class Grid {
     }
 
     method int clearLines() {
-        var int row, linesCleared;
+        var int row, linesCleared, topAffectedRow;
         let row = height - 1;
         let linesCleared = 0;
+        let topAffectedRow = height;
 
         while (row > -1) {
             if (isLineFull(row)) {
                 do clearLine(row);
                 let linesCleared = linesCleared + 1;
+                let topAffectedRow = row;
             } else {
                 let row = row - 1;
             }
+        }
+
+        if (linesCleared > 0) {
+            do drawRows(0, topAffectedRow + linesCleared - 1);
         }
         return linesCleared;
     }
@@ -182,116 +193,48 @@ class Grid {
     }
 
     method void draw() { //full redraw
-        var int row, col, cellValue, index;
-        var int x1, y1, x2, y2;
 
         if (~borderDrawn) {
             do drawBorder();
         }
-
-        let row = 0;
-
-        //draw cells
-        while (row < height) {
-            let col = 0;
-            while (col < width) {
-                let index = getIndex(col, row);
-                let cellValue = board[index];
-
-                //calculate coords w/ offset
-                let x1 = offsetX + (col * cellSize);
-                let y1 = offsetY + (row * cellSize);
-                let x2 = x1 + cellSize - 1;
-                let y2 = y1 + cellSize - 1;
-
-                if (cellValue > 0) {
-                    //draw filled cell
-                    do Screen.setColor(true);
-                    do Screen.drawRectangle(x1, y1, x2, y2);
-                } else {
-                    //draw empty cell
-                    do Screen.setColor(false);
-                    do Screen.drawRectangle(x1, y1, x2, y2);
-                }
-
-                let col = col + 1;
-            }
-            let row = row + 1;
-        }
+        do drawRows(0, height - 1);
         return;
     }
 
-    method void drawCell(int col, int row) { //draw only a specific cell (for selective updates)
-        var int cellValue, index;
+    method void drawCellAt(int col, int row, boolean filled) {
         var int x1, y1, x2, y2;
 
         if (~inBounds(col, row)) {return;}
 
-        let index = getIndex(col, row);
-        let cellValue = board[index];
-
-        //calculate coords w/ offset
         let x1 = offsetX + (col * cellSize);
         let y1 = offsetY + (row * cellSize);
         let x2 = x1 + cellSize - 1;
         let y2 = y1 + cellSize - 1;
 
-        if (cellValue > 0) {
-            //draw filled cell
-            do Screen.setColor(true);
-            do Screen.drawRectangle(x1, y1, x2, y2);
-        } else {
-            //draw empty cell
-            do Screen.setColor(false);
-            do Screen.drawRectangle(x1, y1, x2, y2);
-        }
-        return;
-    }
-
-    method void eraseCell(int col, int row) { //erase (clear) a specific cell
-        var int x1, y1, x2, y2;
-
-        if (~inBounds(col, row)) {return;}
-
-        //calculate coords w/ offset
-        let x1 = offsetX + (col * cellSize);
-        let y1 = offsetY + (row * cellSize);
-        let x2 = x1 + cellSize - 1;
-        let y2 = y1 + cellSize - 1;
-
-        //draw empty cell
-        do Screen.setColor(false);
+        do Screen.setColor(filled);
         do Screen.drawRectangle(x1, y1, x2, y2);
         return;
     }
 
+    method void drawCell(int col, int row) {
+        var int cellValue, index;
+
+        if (~inBounds(col, row)) {return;}
+        let index = getIndex(col, row);
+        let cellValue = board[index];
+        do drawCellAt(col, row, cellValue > 0); //filled if > 0
+        return;
+    }
+
     method void drawRows(int startRow, int endRow) { //draw only specific rows (optimized for line clears)
-        var int row, col, cellValue, index;
-        var int x1, y1, x2, y2;
+        var int row, col;
 
         let row = startRow;
         while (row < endRow + 1) {
             if (inBounds(0, row)) {
                 let col = 0;
                 while (col < width) {
-                    let index = getIndex(col, row);
-                    let cellValue = board[index];
-
-                    //calculate coords w/ offset
-                    let x1 = offsetX + (col * cellSize);
-                    let y1 = offsetY + (row * cellSize);
-                    let x2 = x1 + cellSize - 1;
-                    let y2 = y1 + cellSize - 1;
-
-                    if (cellValue > 0) {
-                        //draw filled cell
-                        do Screen.setColor(true);
-                        do Screen.drawRectangle(x1, y1, x2, y2);
-                    } else {
-                        //draw empty cell
-                        do Screen.setColor(false);
-                        do Screen.drawRectangle(x1, y1, x2, y2);
-                    }
+                    do drawCell(col, row);
                     let col = col + 1;
                 }
             }
@@ -315,9 +258,9 @@ class Grid {
     //Getters
     method int getWidth() {return width;}
     method int getHeight() {return height;}
-    method int getCellSize() {return cellSize;}
-    method int getOffsetX() {return offsetX;}
-    method int getOffsetY() {return offsetY;}
+    function int getCellSize() {return cellSize;}
+    function int getOffsetX() {return offsetX;}
+    function int getOffsetY() {return offsetY;}
 
     method void dispose() {
         do board.dispose();

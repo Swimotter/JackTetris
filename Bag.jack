@@ -7,6 +7,9 @@ class Bag {
 
     constructor Bag new (int initSeed) {
         let seed = initSeed;
+        let bagIndex = 7; //Force initial bag fill
+        let hasNextBag = false;
+
         do MemoryTracker.allocBag();
 
         let currentBag = Array.new(7);
@@ -15,8 +18,6 @@ class Bag {
         let nextBag = Array.new(7);
         do MemoryTracker.allocArray();
 
-        let bagIndex = 7; //Force initial bag fill
-        let hasNextBag = false;
         return this;
     }
 
@@ -58,35 +59,31 @@ class Bag {
         return;
     }
 
-    method void refillBag() {
-        do fillBagArray(currentBag);
-        let bagIndex = 0;
-
-        if (~hasNextBag) {
-            do fillBagArray(nextBag);
-            let hasNextBag = true;
-        }
-        return;
-    }
-
     //Get next block from the bag
     method int getNextBlock() {
         var int blockType;
-        var Array temp;
 
         if (bagIndex > 6) {
             if (hasNextBag) {
-                //Swap next bag to current bag
-                let temp = currentBag;
+                //Swap bags
+                do currentBag.dispose(); //dispose of current bag array
+                do MemoryTracker.freeArray();
+                
                 let currentBag = nextBag;
-                let nextBag = temp;
+                let nextBag = Array.new(7);
+                do MemoryTracker.allocArray();
                 let bagIndex = 0;
 
                 //Refill next bag
                 do fillBagArray(nextBag);
             } else {
                 //First time filling bag
-                do refillBag();
+                do fillBagArray(currentBag);
+                let bagIndex = 0;
+
+                //prepare next bag
+                do fillBagArray(nextBag);
+                let hasNextBag = true;
             }
         }
 
@@ -98,6 +95,9 @@ class Bag {
     //Peek at Nth pieces without consuming
     method int peek(int offset) {
         var int realIndex;
+
+        if (offset < 0) {return -1;} //invalid offset
+
         let realIndex = bagIndex + offset;
 
         //within current bag
@@ -105,7 +105,7 @@ class Bag {
             return currentBag[realIndex];
         }
 
-        //within next bag
+        //within next bag (7-13)
         if (realIndex < 14) {
             if (~hasNextBag) {
                 do fillBagArray(nextBag);
