@@ -188,6 +188,13 @@ class Grid {
             offsetX + (cellSize * width) + 1,
             offsetY + (cellSize * height) + 1
         );
+        do Screen.setColor(false);
+        do Screen.drawRectangle(
+            offsetX - 1,
+            offsetY - 1,
+            offsetX + (cellSize * width),
+            offsetY + (cellSize * height)
+        );
         let borderDrawn = true;
         return;
     }
