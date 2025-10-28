@@ -1,10 +1,4 @@
 class Grid {
-    field Array board; //2D array representing grid
-    field int width, height;
-    field boolean borderDrawn; //to avoid redrawing border unnecessarily
-    static int cellSize;
-    static int offsetX, offsetY;
-
     /**
      0                196px              316px            512px
      ├──────────────────┼──────────────────┼──────────────┤
@@ -23,12 +17,17 @@ class Grid {
 
     Cell size = 12x12 pixels
     Grid size = 10x20 cells
-
     **/
+
+    field Array board; //2D array representing grid
+    field int width, height;
+    static int cellSize;
+    static int offsetX, offsetY;
+
     function void init() {
         let  cellSize = 12;
-        let  offsetX = 195; // (512 - (10*12)) / 2 = 196 (moved left 1 pixel for aesthetics)
-        let  offsetY = 7; // (256 - (20*12)) / 2 = 8 (moved up 1 pixel for aesthetics)
+        let  offsetX = 195; // (512 - (10*12)) / 2 = 196
+        let  offsetY = 7; // (256 - (20*12)) / 2 = 8
         return;
     }
 
@@ -36,10 +35,7 @@ class Grid {
         let width = w;
         let height = h;
         let board = Array.new(width * height);
-        let borderDrawn = false;
 
-        do MemoryTracker.allocGrid();
-        do MemoryTracker.allocArray();
         do clear();
         return this;
     }
@@ -51,7 +47,7 @@ class Grid {
 
     //bounds check
     method boolean inBounds(int x, int y) {
-        return (~(x < 0 | (x > (width - 1)) | (y < 0) | (y > (height - 1)))); //all parenthesis necessary
+        return (~(x < 0) | (x > (width - 1)) | (y < 0) | (y > (height - 1))); //all parenthesis necessary
     }
 
     //occupancy check
@@ -76,35 +72,34 @@ class Grid {
         let shape = block.getShape();
         let i = 0;
 
-        while (i < 8) { //4 pairs of (dx, dy)
+        while (i < 8) {
             let cellX = block.getX() + shape[i];
             let cellY = block.getY() + shape[i + 1];
             if (~isValidCell(cellX, cellY)) {
                 return false;
             }
-            let i = i + 2; //next pair
+            let i = i + 2;
         }
         return true;
     }
 
-    //Place block on grid (make cells occupied)
+    //place block on grid (mark cells occupied)
     method void placeBlock(Blocks block) {
         var Array shape;
         var int i, cellX, cellY, index;
         var int blockType;
 
         let shape = block.getShape();
-        let blockType = block.getType() + 1; //Store as 1-7 to differentiate from empty(0)
+        let blockType = block.getType() + 1; //store as 1-7 to differentiate from empty(0)
         let i = 0;
-        while (i < 8) { //4 pairs of (dx, dy)
+
+        while (i < 8) {
             let cellX = block.getX() + shape[i];
             let cellY = block.getY() + shape[i + 1];
 
             if (inBounds(cellX, cellY)) {
                 let index = getIndex(cellX, cellY);
                 let board[index] = blockType;
-
-                do drawCell(cellX, cellY);
             }
             let i = i + 2; //next pair
         }
@@ -148,7 +143,7 @@ class Grid {
             let board[index] = 0;
             let col = col + 1;
         }
-        return;
+            return;
     }
 
     method int clearLines() {
@@ -166,10 +161,6 @@ class Grid {
                 let row = row - 1;
             }
         }
-
-        if (linesCleared > 0) {
-            do drawRows(0, topAffectedRow + linesCleared - 1);
-        }
         return linesCleared;
     }
 
@@ -180,89 +171,18 @@ class Grid {
         return board[index];
     }
 
-    method void drawBorder() {
-        do Screen.setColor(true);
-        do Screen.drawRectangle(
-            offsetX - 2,
-            offsetY - 2,
-            offsetX + (cellSize * width) + 1,
-            offsetY + (cellSize * height) + 1
-        );
-        do Screen.setColor(false);
-        do Screen.drawRectangle(
-            offsetX - 1,
-            offsetY - 1,
-            offsetX + (cellSize * width),
-            offsetY + (cellSize * height)
-        );
-        let borderDrawn = true;
-        return;
-    }
-
-    method void draw() { //full redraw
-
-        if (~borderDrawn) {
-            do drawBorder();
-        }
-        do drawRows(0, height - 1);
-        return;
-    }
-
-    method void drawCellAt(int col, int row, boolean filled) {
-        var int x1, y1, x2, y2;
-
-        if (~inBounds(col, row)) {return;}
-
-        let x1 = offsetX + (col * cellSize);
-        let y1 = offsetY + (row * cellSize);
-        let x2 = x1 + cellSize - 1;
-        let y2 = y1 + cellSize - 1;
-
-        do Screen.setColor(filled);
-        do Screen.drawRectangle(x1, y1, x2, y2);
-        return;
-    }
-
-    method void drawCell(int col, int row) {
-        var int cellValue, index;
-
-        if (~inBounds(col, row)) {return;}
-        let index = getIndex(col, row);
-        let cellValue = board[index];
-        do drawCellAt(col, row, cellValue > 0); //filled if > 0
-        return;
-    }
-
-    method void drawRows(int startRow, int endRow) { //draw only specific rows (optimized for line clears)
-        var int row, col;
-
-        let row = startRow;
-        while (row < (endRow + 1)) {
-            if (inBounds(0, row)) {
-                let col = 0;
-                while (col < width) {
-                    do drawCell(col, row);
-                    let col = col + 1;
-                }
-            }
-            let row = row + 1;
-        }
-        return;
-    }
-
     method void clear() {
         var int i;
         let i = 0;
 
         while (i < (width * height)) {
-            let board[i] = 0; //0 represents empty cell
+            let board[i] = 0;
             let i = i + 1;
         }
-        let borderDrawn = false;
         return;
     }
 
-    //Getters
+    //getters
     method int getWidth() {return width;}
     method int getHeight() {return height;}
     function int getCellSize() {return cellSize;}
@@ -271,9 +191,7 @@ class Grid {
 
     method void dispose() {
         do board.dispose();
-        do MemoryTracker.freeArray();
         do Memory.deAlloc(this);
-        do MemoryTracker.freeGrid();
         return;
     }
 }

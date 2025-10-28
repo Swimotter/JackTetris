@@ -1,4 +1,14 @@
 class Bag {
+    /**
+    * Implements the "7-bag" randomization system used in modern Tetris
+    * Ensures fair distribution by guaranteeing each of the 7 block types
+    * appears once per bag before any type repeats
+    *
+    * Features:
+    * - Fisher-Yates shuffle algorithm for randomization
+    * - Dual-bag system for seamless transition and look-ahead support
+    * - Peek functionality for displaying upcoming pieces
+    **/
     field Array currentBag;
     field Array nextBag;
     field int bagIndex;
@@ -7,25 +17,21 @@ class Bag {
 
     constructor Bag new (int initSeed) {
         let seed = initSeed;
-        let bagIndex = 7; //Force initial bag fill
+        let bagIndex = 7; //force initial bag fill
         let hasNextBag = false;
 
-        do MemoryTracker.allocBag();
-
         let currentBag = Array.new(7);
-        do MemoryTracker.allocArray();
 
         let nextBag = Array.new(7);
-        do MemoryTracker.allocArray();
 
         return this;
     }
 
-    //Fills and shuffles a new bag of blocks
+    //fills and shuffles a new bag of blocks
     method void fillBagArray(Array bag) {
-        var int i,j,temp;
+        var int i, j, temp;
 
-        //Fill bag with one of each block type
+        //fill bag with one of each block type
         let bag[0] = 0; //I
         let bag[1] = 1; //J
         let bag[2] = 2; //L
@@ -34,50 +40,41 @@ class Bag {
         let bag[5] = 5; //T
         let bag[6] = 6; //Z
 
-        /* Shuffle bag using Fisher-Yates algorithm
-        *  Write down numbers from 1 to N
-        *  Pick random number k between 1 and the number of unstruck numbers
-        *  Counting from the low end, strike out the kth unstruck number and write it down as next number
-        *  Repeat until all numbers are struck out
-        */
+        //shuffle using fisher-yates
         let i = 6;
         while (i > 0) {
-            let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //j = random int between 0 and i a % b = a - (a / b) * b
+            let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //mod
 
-            //swap i and J
+            //swap elements at i and j
             let temp = bag[i];
             let bag[i] = bag[j];
             let bag[j] = temp;
 
-            //update seed for next random number
-            //using 16-bit friendly LCG: seed = (seed * 25173 + 13849) mod 2^16
-            //25173 and 13849 are constants that work well for 16-bit LCG
-            let seed = (seed * 25173) + 13849;
-            //let seed = (seed * 1103515245) + 12345; //1103515245 and 12345 are magic numbers from rand func in C
+            //update seed using 16-bit LCG
+            let seed = (seed * 25173) + 13849; //magic numbers
             let i = i - 1;
         }
         return;
     }
 
-    //Get next block from the bag
+    //get next block from the bag
     method int getNextBlock() {
         var int blockType;
 
+        //refill bag if needed
         if (bagIndex > 6) {
             if (hasNextBag) {
-                //Swap bags
-                do currentBag.dispose(); //dispose of current bag array
-                do MemoryTracker.freeArray();
+                //swap current and next bags
+                do currentBag.dispose();
                 
                 let currentBag = nextBag;
                 let nextBag = Array.new(7);
-                do MemoryTracker.allocArray();
                 let bagIndex = 0;
 
-                //Refill next bag
+                //refill next bag
                 do fillBagArray(nextBag);
             } else {
-                //First time filling bag
+                //first time initialization
                 do fillBagArray(currentBag);
                 let bagIndex = 0;
 
@@ -92,7 +89,7 @@ class Bag {
         return blockType;
     }
 
-    //Peek at Nth pieces without consuming
+    //peek at upcoming blocks without consuming them
     method int peek(int offset) {
         var int realIndex;
 
@@ -113,19 +110,16 @@ class Bag {
             }
             return nextBag[realIndex - 7];
         }
-        //beyond next bag
+        //beyond available bags
         return -1;
     }
 
     method void dispose() {
         do currentBag.dispose(); //dispose of array
-        do MemoryTracker.freeArray();
 
         do nextBag.dispose(); //dispose of array
-        do MemoryTracker.freeArray();
 
         do Memory.deAlloc(this); //dispose of bag object
-        do MemoryTracker.freeBag();
         return;
     }
 }

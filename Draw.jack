@@ -1,0 +1,205 @@
+class Draw {
+    /**
+    * Tetris Rendering Engine
+    *
+    * Centralizes all screen rendering operations for Tetris
+    * 
+    * Architecture:
+    * - Static utility class (all functions, no instance methods)
+    * - Coordinates with Grid class for layour parameters
+    * - Uses Jack Screen API for low-level pixel manipulation
+    *
+    * Grid Rendering:
+    * - drawGridBorder(): Create distinctive border frame
+    * - drawGridCell(): Renders individual cells based on grid state
+    * - drawGridRows(): Optimized partial grid updates for line clears
+    * - drawGrid(): Complete grid redraw for initialization
+    *
+    * Block Rendering:
+    * - drawBlock(): Renders active falling piece
+    * - eraseBlock(): Clears block from previous position
+    * - redrawBlock(): Automatic erase-then-draw for movement
+    * - drawPlacedBlock(): Renders block integrated into grid
+    **/
+
+    //draw the grid border
+    function void drawGridBorder(Grid grid) {
+        var int cellSize, offsetX, offsetY, width, height;
+
+        let cellSize = Grid.getCellSize();
+        let offsetX = Grid.getOffsetX();
+        let offsetY = Grid.getOffsetY();
+        let width = grid.getWidth();
+        let height = grid.getHeight();
+
+        //outer border
+        do Screen.setColor(true);
+        do Screen.drawRectangle(
+            offsetX - 2,
+            offsetY - 2,
+            offsetX + (cellSize * width) + 1,
+            offsetY + (cellSize * height) + 1
+        );
+
+        //inner border
+        do Screen.setColor(false);
+        do Screen.drawRectangle(
+            offsetX - 1,
+            offsetY - 1,
+            offsetX + (cellSize * width),
+            offsetY + (cellSize * height)
+        );
+        return;
+    }
+
+    //draw single cell at grid coordinates
+    function void drawCellAt(int col, int row, boolean filled) {
+        var int x1, y1, x2, y2;
+        var int cellSize, offsetX, offsetY;
+
+        let cellSize = Grid.getCellSize();
+        let offsetX = Grid.getOffsetX();
+        let offsetY = Grid.getOffsetY();
+
+        let x1 = offsetX + (col * cellSize);
+        let y1 = offsetY + (row * cellSize);
+        let x2 = x1 + cellSize - 1;
+        let y2 = y1 + cellSize - 1;
+
+        do Screen.setColor(filled);
+        do Screen.drawRectangle(x1, y1, x2, y2);
+        return;
+    }
+
+    //draw a single cell based on board drawCell
+    function void drawGridCell(Grid grid, int col, int row) {
+        var int cellValue;
+
+        if (~grid.inBounds(col,row)) {return;}
+
+        let cellValue = grid.getCell(col, row);
+        do Draw.drawCellAt(col, row, (cellValue > 0));
+        return;
+    }
+
+    //draw specific rows of the grid
+    function void drawGridRows(Grid grid, int startRow, int endRow) {
+        var int row, col, width;
+
+        let width = grid.getWidth();
+        let row = startRow;
+
+        while (row < (endRow + 1)) {
+            if (grid.inBounds(0, row)) {
+                let col = 0;
+                while (col < width) {
+                    do Draw.drawGridCell(grid, col, row);
+                    let col = col + 1;
+                }
+            }
+            let row = row + 1;
+        }
+        return;
+    }
+
+    //draw entire grid
+    function void drawGrid(Grid grid) {
+        do Draw.drawGridBorder(grid);
+        do Draw.drawGridRows(grid, 0, (grid.getHeight() - 1));
+        return;
+    }
+
+    //draw a block at current position
+    function void drawBlock(Blocks block, Grid grid) {
+        var Array shape;
+        var int i, cellX, cellY;
+        var int x1, y1, x2, y2;
+        var int cellSize, offsetX, offsetY;
+
+        let shape = block.getShape();
+        let cellSize = Grid.getCellSize();
+        let offsetX = Grid.getOffsetX();
+        let offsetY = Grid.getOffsetY();
+
+        do Screen.setColor(true);
+        let i = 0;
+
+        while (i < 8) {
+            let cellX = block.getX() + shape[i];
+            let cellY = block.getY() + shape[i + 1];
+
+            if (grid.inBounds(cellX, cellY)) {
+                let x1 = offsetX + (cellX * cellSize);
+                let y1 = offsetY + (cellY * cellSize);
+                let x2 = x1 + cellSize - 1;
+                let y2 = y1 + cellSize - 1;
+
+                do Screen.drawRectangle(x1, y1, x2, y2);
+            }
+            let i = i + 2;
+        }
+        return;
+    }
+
+    //erase a block at its current position
+    function void eraseBlock(Blocks block, Grid grid) {
+        var Array shape;
+        var int i, cellX, cellY;
+        var int x1, y1, x2, y2;
+        var int cellSize, offsetX, offsetY;
+
+        let shape = block.getShape();
+        let cellSize = Grid.getCellSize();
+        let offsetX = Grid.getOffsetX();
+        let offsetY = Grid.getOffsetY();
+
+        do Screen.setColor(false);
+        let i = 0;
+
+        while (i < 8) {
+            let cellX = block.getX() + shape[i];
+            let cellY = block.getY() + shape[i + 1];
+
+            let x1 = offsetX + (cellX * cellSize);
+            let y1 = offsetY + (cellY * cellSize);
+            let x2 = x1 + cellSize - 1;
+            let y2 = y1 + cellSize - 1;
+            
+            do Screen.drawRectangle(x1, y1, x2, y2);
+            let i = i + 2;
+        }
+        return;
+    }
+
+    //redraw block (erase old, draw new)
+    function void redrawBlock(Blocks block, Grid grid) {
+        do Draw.eraseBlock(block, grid);
+        do Draw.drawBlock(block, grid);
+        return;
+    }
+
+    function void drawPlacedBlock(Blocks block, Grid grid) {
+        var Array shape;
+        var int i, cellX, cellY;
+
+        let shape = block.getShape();
+        let i = 0;
+
+        while (i < 8) {
+            let cellX = block.getX() + shape[i];
+            let cellY = block.getY() + shape[i + 1];
+
+            if (grid.inBounds(cellX, cellY)) {
+                do Draw.drawGridCell(grid, cellX, cellY);
+            }
+            let i = i + 2;
+        }
+        return;
+    }
+
+    //clear entire screen
+    function void clearScreen() {
+        do Screen.clearScreen();
+        return;
+    }
+}

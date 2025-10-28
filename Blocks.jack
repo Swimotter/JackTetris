@@ -1,11 +1,22 @@
 class Blocks {
-	//Block types
+	/**
+	* Handles individual tetrominoes with full rotation and movement
+	* Each block consists of 4 cells arranged in one of 7 standard Tetris shapes
+	*
+	* Pieces:
+	* - I: Line piece (4 cells in a row)
+	* - J, L: Three cells + corner (mirrored)
+	* - O: Square (2x2)
+	* - S, Z: Zigzag pieces (mirrored)
+	* - T: T-shaped piece
+	**/
+
 	static int I, J, L, O, S, T, Z;
 
-	//Block states
+	//block states
 	field int type;
 	field int rotation; //0-3
-	field int x,y; //Pos on grid
+	field int x,y;
 	field Array shape; //store shape array as field to avoid reallocation
 
 	constructor Blocks new (int blockType) {
@@ -13,10 +24,9 @@ class Blocks {
 		let rotation = 0;
 		let x = 3;//start at top-center
 		let y = 0;
-		do MemoryTracker.allocBlock();
+
 		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
-		do MemoryTracker.allocArray();
-		do updateShape(); //fill with intial shape
+		do updateShape();
 		return this;
 	}
 
@@ -32,369 +42,289 @@ class Blocks {
 	}
 	
 	method void updateShape() {
-		/*
-		4x4 grid representation for reference:
-		[][][][]
-		[][][][]
-		[][][][]
-		[][][][]
-		
-		3x3 grid locked to top-left
-		[][][]
-		[][][]
-		[][][]
-		*/
-
-		if (type = 0) { //I
-			if (rotation = 0) {
-				//[][][][]
-				let shape[0] = 0; let shape[1] = 1;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 3; let shape[7] = 1;
-			} if (rotation = 1) {
-				//[]
-				//[]
-				//[]
-				//[]
-				let shape[0] = 2; let shape[1] = 0;
-				let shape[2] = 2; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 2;
-				let shape[6] = 2; let shape[7] = 3;
-			} if (rotation = 2) {
-				//
-				//[][][][]
-				let shape[0] = 0; let shape[1] = 2;
-				let shape[2] = 1; let shape[3] = 2;
-				let shape[4] = 2; let shape[5] = 2;
-				let shape[6] = 3; let shape[7] = 2;
-			} if (rotation = 3) {
-				//    []
-				//    []
-				//    []
-				//    []
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 2;
-				let shape[6] = 1; let shape[7] = 3;
-			}
-		}
-		if (type = 1) { //J
-			if (rotation = 0) {
-				//	[]
-				//	[]
-				//[][]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 0; let shape[5] = 2;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 1) {
-				//[]
-				//[][][]
-				let shape[0] = 0; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 1;
-			} if (rotation = 2) {
-				//  [][]
-				//  []
-				//  []
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 2; let shape[3] = 0;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 3) {
-				//
-				//[][][]
-				//	  []
-				let shape[0] = 0; let shape[1] = 1;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 2;
-			}
-		}
-		if (type = 2) { //L
-			//Similar to J but mirrored
-			if (rotation = 0) {
-				//  []
-				//  []
-				//  [][]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 2;
-				let shape[6] = 2; let shape[7] = 2;
-			} if (rotation = 1) {
-				//[][][]
-				//[]
-				let shape[0] = 0; let shape[1] = 1;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 0; let shape[7] = 2;
-			} if (rotation = 2) {
-				//[][]
-				//  []
-				//  []
-				let shape[0] = 0; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 0;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 3) {
-				//    []
-				//[][][]
-				let shape[0] = 2; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 1;
-			}
-		}
-		if (type = 3) { //O
-			//  [][]
-			//  [][]
+		if (type = 0) {do setIShape();}
+		if (type = 1) {do setJShape();}
+		if (type = 2) {do setLShape();}
+		if (type = 3) {do setOShape();}
+		if (type = 4) {do setSShape();}
+		if (type = 5) {do setTShape();}
+		if (type = 6) {do setZShape();}
+		return;
+	}
+	method void setIShape() {
+		if (rotation = 0) {
+			//[][][][]
+			let shape[0] = 0; let shape[1] = 1;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 3; let shape[7] = 1;
+		} if (rotation = 1) {
+			//[]
+			//[]
+			//[]
+			//[]
+			let shape[0] = 2; let shape[1] = 0;
+			let shape[2] = 2; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 2;
+			let shape[6] = 2; let shape[7] = 3;
+		} if (rotation = 2) {
+			//
+			//[][][][]
+			let shape[0] = 0; let shape[1] = 2;
+			let shape[2] = 1; let shape[3] = 2;
+			let shape[4] = 2; let shape[5] = 2;
+			let shape[6] = 3; let shape[7] = 2;
+		} if (rotation = 3) {
+			//    []
+			//    []
+			//    []
+			//    []
 			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 2; let shape[3] = 0;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 1;
-		}
-		if (type = 4) { //S
-			if (rotation = 0) {
-				//	[][]  
-				//[][]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 2; let shape[3] = 0;
-				let shape[4] = 0; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 1;
-			} if (rotation = 1) {
-				//[]
-				//[][]
-				//  []
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 2;
-			} if (rotation = 2) {
-				//	[][]  
-				//[][]
-				let shape[0] = 1; let shape[1] = 1;
-				let shape[2] = 2; let shape[3] = 1;
-				let shape[4] = 0; let shape[5] = 2;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 3) {
-				//[]
-				//[][]
-				//  []
-				let shape[0] = 0; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			}
-		}
-		if (type = 5) { //T
-			if (rotation = 0) {
-				//  []
-				//[][][]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 1;
-			} if (rotation = 1) {
-				//[]
-				//[][]
-				//[]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 2) {
-				//[][][]
-				//  []
-				let shape[0] = 0; let shape[1] = 1;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-				
-			} if (rotation = 3) {
-				//  []
-				//[][]
-				//  []
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			}
-		}
-		if (type = 6) { //Z
-			if (rotation = 0) {
-				//[][]  
-				//  [][]
-				let shape[0] = 0; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 0;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 2; let shape[7] = 1;
-			} if (rotation = 1) {
-				//    []
-				//  [][]
-				//  []
-				let shape[0] = 2; let shape[1] = 0;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 2; let shape[5] = 1;
-				let shape[6] = 1; let shape[7] = 2;
-			} if (rotation = 2) {
-				//
-				//[][]  
-				//  [][]
-				let shape[0] = 0; let shape[1] = 1;
-				let shape[2] = 1; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 2;
-				let shape[6] = 2; let shape[7] = 2;
-			} if (rotation = 3) {
-				//  []
-				//[][]
-				//[]
-				let shape[0] = 1; let shape[1] = 0;
-				let shape[2] = 0; let shape[3] = 1;
-				let shape[4] = 1; let shape[5] = 1;
-				let shape[6] = 0; let shape[7] = 2;
-			}
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 2;
+			let shape[6] = 1; let shape[7] = 3;
 		}
 		return;
 	}
 
-	//Getters
+	method void setJShape() {
+		if (rotation = 0) {
+			//	[]
+			//	[]
+			//[][]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 0; let shape[5] = 2;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 1) {
+			//[]
+			//[][][]
+			let shape[0] = 0; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 1;
+		} if (rotation = 2) {
+			//  [][]
+			//  []
+			//  []
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 2; let shape[3] = 0;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 3) {
+			//
+			//[][][]
+			//	  []
+			let shape[0] = 0; let shape[1] = 1;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 2;
+		}
+		return;
+	}
+
+	method void setLShape() {
+		if (rotation = 0) {
+			//  []
+			//  []
+			//  [][]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 2;
+			let shape[6] = 2; let shape[7] = 2;
+		} if (rotation = 1) {
+			//[][][]
+			//[]
+			let shape[0] = 0; let shape[1] = 1;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 0; let shape[7] = 2;
+		} if (rotation = 2) {
+			//[][]
+			//  []
+			//  []
+			let shape[0] = 0; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 0;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 3) {
+			//    []
+			//[][][]
+			let shape[0] = 2; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 1;
+		}
+		return;
+	}
+
+	method void setOShape() {
+		//  [][]
+		//  [][]
+		let shape[0] = 1; let shape[1] = 0;
+		let shape[2] = 2; let shape[3] = 0;
+		let shape[4] = 1; let shape[5] = 1;
+		let shape[6] = 2; let shape[7] = 1;
+		return;
+	}
+
+	method void setSShape() {
+		if (rotation = 0) {
+			//	[][]  
+			//[][]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 2; let shape[3] = 0;
+			let shape[4] = 0; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 1;
+		} if (rotation = 1) {
+			//[]
+			//[][]
+			//  []
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 2;
+		} if (rotation = 2) {
+			//	[][]  
+			//[][]
+			let shape[0] = 1; let shape[1] = 1;
+			let shape[2] = 2; let shape[3] = 1;
+			let shape[4] = 0; let shape[5] = 2;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 3) {
+			//[]
+			//[][]
+			//  []
+			let shape[0] = 0; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		}
+		return;
+	}
+
+	method void setTShape() {
+		if (rotation = 0) {
+			//  []
+			//[][][]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 1;
+		} if (rotation = 1) {
+			//[]
+			//[][]
+			//[]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 2) {
+			//[][][]
+			//  []
+			let shape[0] = 0; let shape[1] = 1;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+			
+		} if (rotation = 3) {
+			//  []
+			//[][]
+			//  []
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		}
+		return;
+	}
+
+	method void setZShape() {
+		if (rotation = 0) {
+			//[][]  
+			//  [][]
+			let shape[0] = 0; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 0;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 2; let shape[7] = 1;
+		} if (rotation = 1) {
+			//    []
+			//  [][]
+			//  []
+			let shape[0] = 2; let shape[1] = 0;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 2; let shape[5] = 1;
+			let shape[6] = 1; let shape[7] = 2;
+		} if (rotation = 2) {
+			//
+			//[][]  
+			//  [][]
+			let shape[0] = 0; let shape[1] = 1;
+			let shape[2] = 1; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 2;
+			let shape[6] = 2; let shape[7] = 2;
+		} if (rotation = 3) {
+			//  []
+			//[][]
+			//[]
+			let shape[0] = 1; let shape[1] = 0;
+			let shape[2] = 0; let shape[3] = 1;
+			let shape[4] = 1; let shape[5] = 1;
+			let shape[6] = 0; let shape[7] = 2;
+		}
+		return;
+	}
+
+	method void moveLeft() {
+		let x = x - 1;
+		return;
+	}
+
+	method void moveRight() {
+		let x = x + 1;
+		return;
+	}
+
+	method void moveDown() {
+		let y = y + 1;
+		return;
+	}
+
+	method void moveUp() {
+		let y = y - 1;
+		return;
+	}
+
+	method void rotate() {
+		let rotation = rotation + 1;
+		if (rotation > 3) {let rotation = 0;}
+		do updateShape();
+		return;
+	}
+
+	method void unrotate() {
+		let rotation = rotation - 1;
+		if (rotation < 0) {let rotation = 3;}
+		do updateShape();
+		return;
+	}
+
+	method void setPosition(int newX, int newY) {
+		let x = newX;
+		let y = newY;
+		return;
+	}
+
+	//getters
 	method int getType() {return type;}
 	method int getRotation() {return rotation;}
 	method int getX() {return x;}
 	method int getY() {return y;}
 	method Array getShape() {return shape;}
 
-	//Erase current 4 cells - draw directly to screen
-	method void erase(Grid grid) {
-		var int i, cellX, cellY;
-		var int x1, y1, x2, y2;
-		var int cellSize, offsetX, offsetY;
-		
-		let cellSize = Grid.getCellSize();
-		let offsetX = Grid.getOffsetX();
-		let offsetY = Grid.getOffsetY();
-		
-		let i = 0;
-		while (i < 8) { //4 pairs of (dx, dy)
-			let cellX = x + shape[i];
-			let cellY = y + shape[i + 1];
-			
-			let x1 = offsetX + (cellX * cellSize);
-			let y1 = offsetY + (cellY * cellSize);
-			let x2 = x1 + cellSize - 1;
-			let y2 = y1 + cellSize - 1;
-			
-			do Screen.setColor(false);
-			do Screen.drawRectangle(x1, y1, x2, y2);
-			let i = i + 2;
-		}
-		return;
-	}
-
-	//Movement (now erase old cells and redraw the new ones)
-	method boolean canMoveTo(int newX, int newY, Grid grid) {
-		var int i, cellX, cellY;
-		let i = 0;
-		while (i < 8) { //4 pairs of (dx, dy)
-			let cellX = newX + shape[i];
-			let cellY = newY + shape[i + 1];
-			
-			//Check bounds and occupancy
-			if (~grid.isValidCell(cellX, cellY)) {
-				return false;
-			}
-			
-			let i = i + 2;
-		}
-		return true;
-	}
-
-	method void moveLeft(Grid grid) { 
-		do erase(grid);
-		let x = x - 1; 
-		do draw(grid);
-		return; 
-	}
-	method void moveRight(Grid grid) { 
-		do erase(grid);
-		let x = x + 1; 
-		do draw(grid);
-		return; 
-	}
-	method void moveDown(Grid grid) { 
-		do erase(grid);
-		let y = y + 1; 
-		do draw(grid);
-		return; 
-	}
-	method void moveUp(Grid grid) { 
-		do erase(grid);
-		let y = y - 1; 
-		do draw(grid);
-		return; 
-	}
-	method void rotate(Grid grid) { 
-		// erase current cells, change rotation, update shape, draw new cells
-		do erase(grid);
-		let rotation = (rotation + 1);  
-		if (rotation > 3){let rotation = 0;}
-		do updateShape();
-		do draw(grid);
-		return; 
-	}
-	method void unrotate(Grid grid) {
-		do erase(grid);
-		let rotation = (rotation - 1);  
-		if (rotation < 0){let rotation = 3;}
-		do updateShape();
-		do draw(grid);
-		return; 
-	}
-	method void setPosition(int newX, int newY, Grid grid) {
-		do erase(grid);
-		let x = newX;
-		let y = newY;
-		do draw(grid);
-		return;
-	}
-
-	method void draw(Grid grid) {
-		var int i, cellX, cellY;
-		var int x1, y1, x2, y2;
-		var int cellSize, offsetX, offsetY;
-		
-		let cellSize = Grid.getCellSize();
-		let offsetX = Grid.getOffsetX();
-		let offsetY = Grid.getOffsetY();
-		
-		do Screen.setColor(true);
-		let i = 0;
-		while (i < 8) { //4 pairs of (dx, dy)
-			let cellX = x + shape[i];
-			let cellY = y + shape[i + 1];
-			
-			// Draw directly to screen
-			if (grid.inBounds(cellX, cellY)) {
-				let x1 = offsetX + (cellX * cellSize);
-				let y1 = offsetY + (cellY * cellSize);
-				let x2 = x1 + cellSize - 1;
-				let y2 = y1 + cellSize - 1;
-				
-				do Screen.drawRectangle(x1, y1, x2, y2);
-			}
-			
-			let i = i + 2; //next pair
-		}
-		return;
-	}
-
 	method void dispose() {
-		do shape.dispose(); //dispose shape array
-		do MemoryTracker.freeArray();
+		do shape.dispose();
 		do Memory.deAlloc(this);
-		do MemoryTracker.freeBlock();
 		return;
 	}
 }
