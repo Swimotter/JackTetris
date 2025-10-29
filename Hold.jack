@@ -1,0 +1,66 @@
+class Hold {
+    /**
+    * Tetris Hold System
+    *
+    * Manages the hold piece feature:
+    * - Store one piece for later used
+    * - Swap current piece with held piece
+    * - Only one swap per piece allowed
+    * - Visual display in hold box
+    **/
+
+    field int heldType;
+    field boolean canSwap;
+    field boolean hasHeld;
+
+    constructor Hold new() {
+        let heldType = -1;
+        let canSwap = true;
+        let hasHeld = false;
+        return this;
+    }
+
+    //attempt to hold current piece
+    //returns: -1 if not allowed, other wise returns piece type
+    method int holdPiece(int currentType) {
+        var int returnType;
+
+        if (~canSwap) {
+            return -1;
+        }
+
+        if (~hasHeld) {
+            let heldType = currentType;
+            let hasHeld = true;
+            let canSwap = false;
+            return -2; //spawn new piece from bag
+        }
+
+        let returnType = heldType;
+        let heldType = currentType;
+        let canSwap = false;
+        return returnType;
+    }
+
+    method void enableSwap() {
+        let canSwap = true;
+        return;
+    }
+
+    method void reset() {
+        let heldType = -1;
+        let canSwap = true;
+        let hasHeld = false;
+        return;
+    }
+
+    //getters
+    method int getHeldType() {return heldType;}
+    method boolean canHold() {return canSwap;}
+    method boolean isEmpty() {return heldType = -1;}
+
+    method void dispose() {
+        do Memory.deAlloc(this);
+        return;
+    }
+}

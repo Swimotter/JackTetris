@@ -1,0 +1,121 @@
+class UI {
+    /**
+    * Tetris UI Drawing System
+    *
+    * Handles all UI elements outside of the main grid:
+    * - Hold piece box
+    * - Next piece preview box
+    *
+    * Layout uses the LEFT and RIGHT spaces (196px each)
+    * defined in Grid
+    **/
+
+    //draw hold box with piece preview
+    function void drawHoldBox(Hold hold) {
+        var int boxX, boxY, boxSize;
+        var int heldType;
+        var Blocks previewBlock;
+        
+        let boxX = 15;
+        let boxY = 120;
+        let boxSize = 60;
+        
+        //draw hold box border
+        do Screen.setColor(true);
+        do Screen.drawRectangle(boxX, boxY, boxX + boxSize, boxY + boxSize);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(boxX + 2, boxY + 2, boxX + boxSize - 2, boxY + boxSize - 2);
+        
+        //draw label
+        do Output.moveCursor(10, 1);
+        do Output.printString("HOLD");
+        
+        //draw held piece if exists
+        let heldType = hold.getHeldType();
+        if (~(heldType = -1)) {
+            let previewBlock = Blocks.new(heldType);
+            do UI.drawPreviewPiece(previewBlock, boxX + 10, boxY + 20, 8);
+            do previewBlock.dispose();
+        }
+        
+        return;
+    }
+
+    //draw next piece preview box
+    function void drawNextBox(Bag bag) {
+        var int boxX, boxY, boxSize;
+        var int nextType;
+        var Blocks previewBlock;
+        
+        let boxX = 360;
+        let boxY = 30;
+        let boxSize = 80;
+        
+        //draw next box border
+        do Screen.setColor(true);
+        do Screen.drawRectangle(boxX, boxY, boxX + boxSize, boxY + boxSize);
+        do Screen.setColor(false);
+        do Screen.drawRectangle(boxX + 2, boxY + 2, boxX + boxSize - 2, boxY + boxSize - 2);
+        
+        //draw label
+        do Output.moveCursor(2, 46);
+        do Output.printString("NEXT");
+        
+        //draw next piece
+        let nextType = bag.peek(0);
+        if (~(nextType = -1)) {
+            let previewBlock = Blocks.new(nextType);
+            do UI.drawPreviewPiece(previewBlock, boxX + 20, boxY + 25, 10);
+            do previewBlock.dispose();
+        }
+        
+        return;
+    }
+
+    //draw a preview of a piece (smaller, centered in box)
+    function void drawPreviewPiece(Blocks block, int offsetX, int offsetY, int cellSize) {
+        var Array shape;
+        var int i, cellX, cellY;
+        var int x1, y1, x2, y2;
+        
+        let shape = block.getShape();
+        
+        do Screen.setColor(true);
+        let i = 0;
+        
+        while (i < 8) {
+            let cellX = shape[i];
+            let cellY = shape[i + 1];
+            
+            let x1 = offsetX + (cellX * cellSize);
+            let y1 = offsetY + (cellY * cellSize);
+            let x2 = x1 + cellSize - 1;
+            let y2 = y1 + cellSize - 1;
+            
+            do Screen.drawRectangle(x1, y1, x2, y2);
+            let i = i + 2;
+        }
+        
+        return;
+    }
+
+    //clear ui regions
+    function void clearHoldArea() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(10, 115, 90, 195);
+        return;
+    }
+
+    function void clearNextArea() {
+        do Screen.setColor(false);
+        do Screen.drawRectangle(350, 25, 480, 125);
+        return;
+    }
+
+    //draw all ui elements
+    function void drawAll(Hold hold, Bag bag) {
+        do UI.drawHoldBox(hold);
+        do UI.drawNextBox(bag);
+        return;
+    }
+}
