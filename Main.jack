@@ -3,9 +3,6 @@ class Main {
         var Game game;
         var boolean playing;
 
-        do MemoryTracker.init();
-        do MemoryTracker.enable();
-
         do Game.init();
 
         let playing = true;
