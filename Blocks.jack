@@ -16,7 +16,7 @@ class Blocks {
 	//block states
 	field int type;
 	field int rotation; //0-3
-	field int x,y;
+	field int x, y;
 	field Array shape; //store shape array as field to avoid reallocation
 
 	constructor Blocks new (int blockType) {
