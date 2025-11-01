@@ -5,7 +5,6 @@ class Score {
     * 
     * - Line clear scoring (single, double, triple, tetris)
     * - Combo system for consecutive clears
-    * - Level progression based on clears
     * - Score tracking and display
     *
     * Scoring Formula
@@ -16,20 +15,18 @@ class Score {
     **/
 
     field int score;
-    field int level;
     field int linesCleared;
     field int combo;
 
     constructor Score new() {
         let score = 0;
-        let level = 1;
         let linesCleared = 0;
         let combo = 0;
         return this;
     }
 
     //add score for lines cleared
-    method void addLineScore(int lines) {
+    method void addLineScore(int lines, int level) {
         var int points, comboBonus;
 
         if (lines = 0) {
@@ -52,17 +49,6 @@ class Score {
         let combo = combo + 1;
 
         //level up every 10 lines
-        do updateLevel();
-        return;
-    }
-
-    //update level based on lines cleared
-    method void updateLevel() {
-        var int newLevel;
-        let newLevel = (linesCleared / 10) + 1;
-        if (newLevel > level) {
-            let level = newLevel;
-        }
         return;
     }
 
@@ -85,24 +71,8 @@ class Score {
 
     //getters
     method int getScore() {return score;}
-    method int getLevel() {return level;}
     method int getLines() {return linesCleared;}
     method int getCombo() {return combo;}
-
-    //get gravity delay in frames
-    method int getGravityDelay() { //decrease over time with level
-        var int delay;
-
-        //start at 48 frames
-        let delay = 48 - ((level - 1) * 3);
-
-        //min delay of 3 frames
-        if (delay < 3) {
-            let delay = 3;
-        }
-
-        return delay;
-    }
 
     method void dispose() {
         do Memory.deAlloc(this);
