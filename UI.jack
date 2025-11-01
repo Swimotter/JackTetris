@@ -13,8 +13,8 @@ class UI {
     //draw hold box with piece preview
     function void drawHoldBox(Hold hold) {
         var int boxX, boxY, boxSize;
-        var int heldType;
-        var Blocks previewBlock;
+        var Block heldBlock;
+        var int oldX, oldY;
         
         let boxX = 15;
         let boxY = 120;
@@ -30,12 +30,14 @@ class UI {
         do Output.moveCursor(10, 1);
         do Output.printString("HOLD");
         
-        //draw held piece if exists
-        let heldType = hold.getHeldType();
-        if (~(heldType = -1)) {
-            let previewBlock = Blocks.new(heldType);
-            do UI.drawPreviewPiece(previewBlock, boxX + 10, boxY + 20, 8);
-            do previewBlock.dispose();
+        //draw held piece if exists by repositioning temporarily
+        let heldBlock = hold.getHeldBlock();
+        if (~(heldBlock = null)) {
+            let oldX = heldBlock.getX();
+            let oldY = heldBlock.getY();
+            do heldBlock.setPosition(1, 1); //temp position for preview
+            do UI.drawPreviewPiece(heldBlock, boxX + 10, boxY + 20, 8);
+            do heldBlock.setPosition(oldX, oldY); //restore position
         }
         
         return;

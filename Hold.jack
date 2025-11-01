@@ -3,63 +3,77 @@ class Hold {
     * Tetris Hold System
     *
     * Manages the hold piece feature:
-    * - Store one piece for later used
+    * - Store one piece for later use
     * - Swap current piece with held piece
     * - Only one swap per piece allowed
     * - Visual display in hold box
     **/
 
-    field int heldType;
+    field Blocks heldBlock;
     field boolean canSwap;
-    field boolean hasHeld;
 
     constructor Hold new() {
-        let heldType = -1;
+        let heldBlock = null;
         let canSwap = true;
-        let hasHeld = false;
         return this;
     }
 
     //attempt to hold current piece
-    //returns: -1 if not allowed, other wise returns piece type
-    method int holdPiece(int currentType) {
-        var int returnType;
+    method Blocks holdPiece(Blocks currentBlock) {
+        var Blocks temp;
 
-        if (~canSwap) {
-            return -1;
+        if (~canSwap) { //cannot swap return current block
+            return currentBlock;
         }
 
-        if (~hasHeld) {
-            let heldType = currentType;
-            let hasHeld = true;
+        //first hold - store piece and signal new piece to be spawned
+        if (heldBlock = null) {
+            let heldBlock = currentBlock;
             let canSwap = false;
-            return -2; //spawn new piece from bag
+            return null; //no block to return
         }
 
-        let returnType = heldType;
-        let heldType = currentType;
+        //swap held and current pieces
+        let temp = heldBlock;
+        let heldBlock = currentBlock;
         let canSwap = false;
-        return returnType;
+
+        do temp.setPosition(3, 0); //reset position
+        return temp;
     }
 
+    //enable swapping again (after piece is placed)
     method void enableSwap() {
         let canSwap = true;
         return;
     }
 
+    //reset hold system (new game)
     method void reset() {
-        let heldType = -1;
+        if (~(heldBlock = null)) {
+            do heldBlock.dispose();
+        }
+        let heldBlock = null;
         let canSwap = true;
-        let hasHeld = false;
         return;
     }
 
     //getters
-    method int getHeldType() {return heldType;}
+    method Blocks getHeldBlock() {return heldBlock;}
     method boolean canHold() {return canSwap;}
-    method boolean isEmpty() {return heldType = -1;}
+    method boolean isEmpty() {return heldBlock = null;}
+
+    method int getHeldType() { // Get held block type for UI display
+        if (heldBlock = null) {
+            return -1;
+        }
+        return heldBlock.getType();
+    }
 
     method void dispose() {
+        if (~(heldBlock = null)) {
+            do heldBlock.dispose();
+        }
         do Memory.deAlloc(this);
         return;
     }
