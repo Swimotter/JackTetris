@@ -110,7 +110,7 @@ class Draw {
     }
 
     //draw a block at current position
-    function void drawBlock(Blocks block, Grid grid) {
+    function void drawBlock(Blocks block, Grid grid, boolean filled) {
         var Array shape;
         var int i, cellX, cellY;
         var int x1, y1, x2, y2;
@@ -121,7 +121,7 @@ class Draw {
         let offsetX = Grid.getOffsetX();
         let offsetY = Grid.getOffsetY();
 
-        do Screen.setColor(true);
+        do Screen.setColor(filled);
         let i = 0;
 
         while (i < 8) {
@@ -141,40 +141,10 @@ class Draw {
         return;
     }
 
-    //erase a block at its current position
-    function void eraseBlock(Blocks block, Grid grid) {
-        var Array shape;
-        var int i, cellX, cellY;
-        var int x1, y1, x2, y2;
-        var int cellSize, offsetX, offsetY;
-
-        let shape = block.getShape();
-        let cellSize = Grid.getCellSize();
-        let offsetX = Grid.getOffsetX();
-        let offsetY = Grid.getOffsetY();
-
-        do Screen.setColor(false);
-        let i = 0;
-
-        while (i < 8) {
-            let cellX = block.getX() + shape[i];
-            let cellY = block.getY() + shape[i + 1];
-
-            let x1 = offsetX + (cellX * cellSize);
-            let y1 = offsetY + (cellY * cellSize);
-            let x2 = x1 + cellSize - 1;
-            let y2 = y1 + cellSize - 1;
-            
-            do Screen.drawRectangle(x1, y1, x2, y2);
-            let i = i + 2;
-        }
-        return;
-    }
-
-    //redraw block (erase old, draw new)
+    //redraw block (erase old, draw new) !does not update block position
     function void redrawBlock(Blocks block, Grid grid) {
-        do Draw.eraseBlock(block, grid);
-        do Draw.drawBlock(block, grid);
+        do Draw.drawBlock(block, grid, false);
+        do Draw.drawBlock(block, grid, true);
         return;
     }
 
