@@ -64,6 +64,25 @@ class Grid {
         return isEmpty(x, y);
     }
 
+    method boolean canMoveTo(Blocks block, int newX, int newY) {
+        var Array shape;
+        var int i, cellX, cellY;
+        let shape = block.getShape();
+        let i = 0;
+        while (i < 8) { //4 pairs of (dx, dy)
+            let cellX = newX + shape[i];
+            let cellY = newY + shape[i + 1];
+
+            //Check bounds and occupancy
+            if (~isValidCell(cellX, cellY)) {
+                return false;
+            }
+
+            let i = i + 2;
+        }
+        return true;
+    }
+
     //check if block can be placed at its current position
     method boolean canPlaceBlock(Blocks block) {
         var Array shape;
