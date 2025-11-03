@@ -3,7 +3,7 @@ class Draw {
     * Tetris Rendering Engine
     *
     * Centralizes all screen rendering operations for Tetris
-    * 
+    *
     * Architecture:
     * - Static utility class (all functions, no instance methods)
     * - Coordinates with Grid class for layour parameters
@@ -138,13 +138,6 @@ class Draw {
             }
             let i = i + 2;
         }
-        return;
-    }
-
-    //redraw block (erase old, draw new) !does not update block position
-    function void redrawBlock(Blocks block, Grid grid) {
-        do Draw.drawBlock(block, grid, false);
-        do Draw.drawBlock(block, grid, true);
         return;
     }
 
