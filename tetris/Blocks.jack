@@ -19,17 +19,6 @@ class Blocks {
 	field int x, y;
 	field Array shape; //store shape array as field to avoid reallocation
 
-	constructor Blocks new (int blockType) {
-		let type = blockType;
-		let rotation = 0;
-		let x = 3;//start at top-center
-		let y = 0;
-
-		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
-		do updateShape();
-		return this;
-	}
-
 	function void init() {
 		let I = 0;
 		let J = 1;
@@ -40,17 +29,50 @@ class Blocks {
 		let Z = 6;
 		return;
 	}
-	
+
+	constructor Blocks new(int blockType) {
+		let type = blockType;
+		let rotation = 0;
+		let x = 3; //start at top-center
+		let y = 0;
+
+		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
+		do updateShape();
+		return this;
+	}
+
 	method void updateShape() {
-		if (type = 0) {do setIShape();}
-		if (type = 1) {do setJShape();}
-		if (type = 2) {do setLShape();}
-		if (type = 3) {do setOShape();}
-		if (type = 4) {do setSShape();}
-		if (type = 5) {do setTShape();}
-		if (type = 6) {do setZShape();}
+		if (type = 0) {
+			do setIShape();
+			return;
+		}
+		if (type = 1) {
+			do setJShape();
+			return;
+		}
+		if (type = 2) {
+			do setLShape();
+			return;
+		}
+		if (type = 3) {
+			do setOShape();
+			return;
+		}
+		if (type = 4) {
+			do setSShape();
+			return;
+		}
+		if (type = 5) {
+			do setTShape();
+			return;
+		}
+		if (type = 6) {
+			do setZShape();
+			return;
+		}
 		return;
 	}
+
 	method void setIShape() {
 		if (rotation = 0) {
 			//[][][][]
@@ -170,7 +192,7 @@ class Blocks {
 
 	method void setSShape() {
 		if (rotation = 0) {
-			//	[][]  
+			//	[][]
 			//[][]
 			let shape[0] = 1; let shape[1] = 0;
 			let shape[2] = 2; let shape[3] = 0;
@@ -185,7 +207,7 @@ class Blocks {
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 2;
 		} if (rotation = 2) {
-			//	[][]  
+			//	[][]
 			//[][]
 			let shape[0] = 1; let shape[1] = 1;
 			let shape[2] = 2; let shape[3] = 1;
@@ -226,7 +248,7 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
-			
+
 		} if (rotation = 3) {
 			//  []
 			//[][]
@@ -241,7 +263,7 @@ class Blocks {
 
 	method void setZShape() {
 		if (rotation = 0) {
-			//[][]  
+			//[][]
 			//  [][]
 			let shape[0] = 0; let shape[1] = 0;
 			let shape[2] = 1; let shape[3] = 0;
@@ -257,7 +279,7 @@ class Blocks {
 			let shape[6] = 1; let shape[7] = 2;
 		} if (rotation = 2) {
 			//
-			//[][]  
+			//[][]
 			//  [][]
 			let shape[0] = 0; let shape[1] = 1;
 			let shape[2] = 1; let shape[3] = 1;

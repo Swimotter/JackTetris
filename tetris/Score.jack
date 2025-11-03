@@ -1,81 +1,81 @@
 class Score {
-    /**
-    * Tetris Scoring System
-    * Implements standard Tetris scoring mechanics:
-    * 
-    * - Line clear scoring (single, double, triple, tetris)
-    * - Combo system for consecutive clears
-    * - Score tracking and display
-    *
-    * Scoring Formula
-    * - Single: 100 * level
-    * - Double: 300 * level
-    * - Triple: 500 * level
-    * - Tetris: 800 * level
-    **/
+	/**
+	* Tetris Scoring System
+	* Implements standard Tetris scoring mechanics:
+	*
+	* - Line clear scoring (single, double, triple, tetris)
+	* - Combo system for consecutive clears
+	* - Score tracking and display
+	*
+	* Scoring Formula
+	* - Single: 100 * level
+	* - Double: 300 * level
+	* - Triple: 500 * level
+	* - Tetris: 800 * level
+	**/
 
-    field int score;
-    field int linesCleared;
-    field int combo;
+	field int score;
+	field int linesCleared;
+	field int combo;
 
-    constructor Score new() {
-        let score = 0;
-        let linesCleared = 0;
-        let combo = 0;
-        return this;
-    }
+	constructor Score new() {
+		let score = 0;
+		let linesCleared = 0;
+		let combo = 0;
+		return this;
+	}
 
-    //add score for lines cleared
-    method void addLineScore(int lines, int level) {
-        var int points, comboBonus;
+	//add score for lines cleared
+	method void addLineScore(int lines, int level) {
+		var int points, comboBonus;
 
-        if (lines = 0) {
-            let combo = 0; //reset
-            return;
-        }
+		if (lines = 0) {
+			let combo = 0; //reset
+			return;
+		}
 
-        //base points based on lines cleared
-        if (lines = 1) {let points = 100 * level;}
-        if (lines = 2) {let points = 300 * level;}
-        if (lines = 3) {let points = 500 * level;}
-        if (lines = 4) {let points = 800 * level;} //Tetris!
+		//base points based on lines cleared
+		if (lines = 1) {let points = 100 * level;}
+		if (lines = 2) {let points = 300 * level;}
+		if (lines = 3) {let points = 500 * level;}
+		if (lines = 4) {let points = 800 * level;} //Tetris!
 
-        //combo bonus (50 points per combo * level)
-        let comboBonus = combo * 50 * level;
-        let points = points + comboBonus;
+		//combo bonus (50 points per combo * level)
+		let comboBonus = combo * 50 * level;
+		let points = points + comboBonus;
 
-        let score = score + points;
-        let linesCleared = linesCleared + lines;
-        let combo = combo + 1;
+		let score = score + points;
+		let linesCleared = linesCleared + lines;
+		let combo = combo + 1;
 
-        //level up every 10 lines
-        return;
-    }
+		//level up every 10 lines
+		return;
+	}
 
-    //soft drop points (1 point per cell)
-    method void addSoftDropScore(int cells) {
-        let score = score + cells;
-        return;
-    }
+	//soft drop points (1 point per cell)
+	method void addSoftDropScore(int cells) {
+		let score = score + cells;
+		return;
+	}
 
-    //hard drop points (2 points per cell)
-    method void addHardDropScore(int cells) {
-        let score = score + (cells * 2);
-        return;
-    }
+	//hard drop points (2 points per cell)
+	method void addHardDropScore(int cells) {
+		let score = score + (cells * 2);
+		return;
+	}
 
-    method void resetCombo() {
-        let combo = 0;
-        return;
-    }
+	method void resetCombo() {
+		let combo = 0;
+		return;
+	}
 
-    //getters
-    method int getScore() {return score;}
-    method int getLines() {return linesCleared;}
-    method int getCombo() {return combo;}
+	//getters
+	method int getScore() {return score;}
+	method int getLines() {return linesCleared;}
+	method int getCombo() {return combo;}
 
-    method void dispose() {
-        do Memory.deAlloc(this);
-        return;
-    }
+	method void dispose() {
+		do Memory.deAlloc(this);
+		return;
+	}
 }

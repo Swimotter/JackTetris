@@ -1,125 +1,100 @@
 class Bag {
-    /**
-    * Implements the "7-bag" randomization system used in modern Tetris
-    * Ensures fair distribution by guaranteeing each of the 7 block types
-    * appears once per bag before any type repeats
-    *
-    * Features:
-    * - Fisher-Yates shuffle algorithm for randomization
-    * - Dual-bag system for seamless transition and look-ahead support
-    * - Peek functionality for displaying upcoming pieces
-    **/
-    field Array currentBag;
-    field Array nextBag;
-    field int bagIndex;
-    field int seed;
-    field boolean hasNextBag;
+	/**
+	* Implements the "7-bag" randomization system used in modern Tetris
+	* Ensures fair distribution by guaranteeing each of the 7 block types
+	* appears once per bag before any type repeats
+	*
+	* Features:
+	* - Fisher-Yates shuffle algorithm for randomization
+	* - Dual-bag system for seamless transition and look-ahead support
+	* - Peek functionality for displaying upcoming pieces
+	**/
+	field Array currentBag;
+	field Array nextBag;
+	field int bagIndex;
+	field int seed;
+	field boolean hasNextBag;
 
-    constructor Bag new (int initSeed) {
-        let seed = initSeed;
-        let bagIndex = 7; //force initial bag fill
-        let hasNextBag = false;
+	constructor Bag new(int initSeed) {
+		let seed = initSeed;
+		let bagIndex = 7; //force initial bag fill
+		let hasNextBag = false;
 
-        let currentBag = Array.new(7);
+		let currentBag = Array.new(7);
 
-        let nextBag = Array.new(7);
+		let nextBag = Array.new(7);
 
-        return this;
-    }
+		return this;
+	}
 
-    //fills and shuffles a new bag of blocks
-    method void fillBagArray(Array bag) {
-        var int i, j, temp;
+	//fills and shuffles a new bag of blocks
+	method void fillBagArray(Array bag) {
+		var int i, j, temp;
 
-        //fill bag with one of each block type
-        let bag[0] = 0; //I
-        let bag[1] = 1; //J
-        let bag[2] = 2; //L
-        let bag[3] = 3; //O
-        let bag[4] = 4; //S
-        let bag[5] = 5; //T
-        let bag[6] = 6; //Z
+		//fill bag with one of each block type
+		let bag[0] = 0; //I
+		let bag[1] = 1; //J
+		let bag[2] = 2; //L
+		let bag[3] = 3; //O
+		let bag[4] = 4; //S
+		let bag[5] = 5; //T
+		let bag[6] = 6; //Z
 
-        //shuffle using fisher-yates
-        let i = 6;
-        while (i > 0) {
-            let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //mod
+		//shuffle using fisher-yates
+		let i = 6;
+		while (i > 0) {
+			let j = Math.abs(seed) - ((Math.abs(seed) / (i + 1)) * (i + 1)); //mod
 
-            //swap elements at i and j
-            let temp = bag[i];
-            let bag[i] = bag[j];
-            let bag[j] = temp;
+			//swap elements at i and j
+			let temp = bag[i];
+			let bag[i] = bag[j];
+			let bag[j] = temp;
 
-            //update seed using 16-bit LCG
-            let seed = (seed * 25173) + 13849; //magic numbers
-            let i = i - 1;
-        }
-        return;
-    }
+			//update seed using 16-bit LCG
+			let seed = (seed * 25173) + 13849; //magic numbers
+			let i = i - 1;
+		}
+		return;
+	}
 
-    //get next block from the bag
-    method int getNextBlock() {
-        var int blockType;
+	//get next block from the bag
+	method int getNextBlock() {
+		var int blockType;
 
-        //refill bag if needed
-        if (bagIndex > 6) {
-            if (hasNextBag) {
-                //swap current and next bags
-                do currentBag.dispose();
-                
-                let currentBag = nextBag;
-                let nextBag = Array.new(7);
-                let bagIndex = 0;
+		//refill bag if needed
+		if (bagIndex > 6) {
+			if (hasNextBag) {
+				//swap current and next bags
+				do currentBag.dispose();
 
-                //refill next bag
-                do fillBagArray(nextBag);
-            } else {
-                //first time initialization
-                do fillBagArray(currentBag);
-                let bagIndex = 0;
+				let currentBag = nextBag;
+				let nextBag = Array.new(7);
+				let bagIndex = 0;
 
-                //prepare next bag
-                do fillBagArray(nextBag);
-                let hasNextBag = true;
-            }
-        }
+				//refill next bag
+				do fillBagArray(nextBag);
+			} else {
+				//first time initialization
+				do fillBagArray(currentBag);
+				let bagIndex = 0;
 
-        let blockType = currentBag[bagIndex];
-        let bagIndex = bagIndex + 1;
-        return blockType;
-    }
+				//prepare next bag
+				do fillBagArray(nextBag);
+				let hasNextBag = true;
+			}
+		}
 
-    //peek at upcoming blocks without consuming them
-    method int peek(int offset) {
-        var int realIndex;
+		let blockType = currentBag[bagIndex];
+		let bagIndex = bagIndex + 1;
+		return blockType;
+	}
 
-        if (offset < 0) {return -1;} //invalid offset
+	method void dispose() {
+		do currentBag.dispose(); //dispose of array
 
-        let realIndex = bagIndex + offset;
+		do nextBag.dispose(); //dispose of array
 
-        //within current bag
-        if (realIndex < 7) {
-            return currentBag[realIndex];
-        }
-
-        //within next bag (7-13)
-        if (realIndex < 14) {
-            if (~hasNextBag) {
-                do fillBagArray(nextBag);
-                let hasNextBag = true;
-            }
-            return nextBag[realIndex - 7];
-        }
-        //beyond available bags
-        return -1;
-    }
-
-    method void dispose() {
-        do currentBag.dispose(); //dispose of array
-
-        do nextBag.dispose(); //dispose of array
-
-        do Memory.deAlloc(this); //dispose of bag object
-        return;
-    }
+		do Memory.deAlloc(this); //dispose of bag object
+		return;
+	}
 }

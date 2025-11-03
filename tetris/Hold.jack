@@ -1,80 +1,80 @@
 class Hold {
-    /**
-    * Tetris Hold System
-    *
-    * Manages the hold piece feature:
-    * - Store one piece for later use
-    * - Swap current piece with held piece
-    * - Only one swap per piece allowed
-    * - Visual display in hold box
-    **/
+	/**
+	* Tetris Hold System
+	*
+	* Manages the hold piece feature:
+	* - Store one piece for later use
+	* - Swap current piece with held piece
+	* - Only one swap per piece allowed
+	* - Visual display in hold box
+	**/
 
-    field Blocks heldBlock;
-    field boolean canSwap;
+	field Blocks heldBlock;
+	field boolean canSwap;
 
-    constructor Hold new() {
-        let heldBlock = null;
-        let canSwap = true;
-        return this;
-    }
+	constructor Hold new() {
+		let heldBlock = null;
+		let canSwap = true;
+		return this;
+	}
 
-    //attempt to hold current piece
-    method Blocks holdPiece(Blocks currentBlock) {
-        var Blocks temp;
+	//attempt to hold current piece
+	method Blocks holdPiece(Blocks currentBlock) {
+		var Blocks temp;
 
-        if (~canSwap) { //cannot swap return current block
-            return currentBlock;
-        }
+		if (~canSwap) { //cannot swap return current block
+			return currentBlock;
+		}
 
-        //first hold - store piece and signal new piece to be spawned
-        if (heldBlock = null) {
-            let heldBlock = currentBlock;
-            let canSwap = false;
-            return null; //no block to return
-        }
+		//first hold - store piece and signal new piece to be spawned
+		if (heldBlock = null) {
+			let heldBlock = currentBlock;
+			let canSwap = false;
+			return null; //no block to return
+		}
 
-        //swap held and current pieces
-        let temp = heldBlock;
-        let heldBlock = currentBlock;
-        let canSwap = false;
+		//swap held and current pieces
+		let temp = heldBlock;
+		let heldBlock = currentBlock;
+		let canSwap = false;
 
-        do temp.setPosition(3, 0); //reset position
-        return temp;
-    }
+		do temp.setPosition(3, 0); //reset position
+		return temp;
+	}
 
-    //enable swapping again (after piece is placed)
-    method void enableSwap() {
-        let canSwap = true;
-        return;
-    }
+	//enable swapping again (after piece is placed)
+	method void enableSwap() {
+		let canSwap = true;
+		return;
+	}
 
-    //reset hold system (new game)
-    method void reset() {
-        if (~(heldBlock = null)) {
-            do heldBlock.dispose();
-        }
-        let heldBlock = null;
-        let canSwap = true;
-        return;
-    }
+	//reset hold system (new game)
+	method void reset() {
+		if (~(heldBlock = null)) {
+			do heldBlock.dispose();
+		}
+		let heldBlock = null;
+		let canSwap = true;
+		return;
+	}
 
-    //getters
-    method Blocks getHeldBlock() {return heldBlock;}
-    method boolean canHold() {return canSwap;}
-    method boolean isEmpty() {return heldBlock = null;}
+	//getters
+	method Blocks getHeldBlock() {return heldBlock;}
+	method boolean canHold() {return canSwap;}
+	method boolean isEmpty() {return heldBlock = null;}
 
-    method int getHeldType() { // Get held block type for UI display
-        if (heldBlock = null) {
-            return -1;
-        }
-        return heldBlock.getType();
-    }
+	method int getHeldType() { // Get held block type for UI display
+		if (heldBlock = null) {
+			return -1;
+		}
+		return heldBlock.getType();
+	}
 
-    method void dispose() {
-        if (~(heldBlock = null)) {
-            do heldBlock.dispose();
-        }
-        do Memory.deAlloc(this);
-        return;
-    }
+	method void dispose() {
+		if (~(heldBlock = null)) {
+			do heldBlock.dispose();
+		}
+		do Memory.deAlloc(this);
+		return;
+	}
 }
