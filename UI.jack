@@ -10,67 +10,82 @@ class UI {
     * defined in Grid
     **/
 
+    static int holdBoxX, holdBoxY, holdBoxSize;
+    static int nextBoxX, nextBoxY, nextBoxSize;
+
+    function void init() {
+        let holdBoxX = 15;
+        let holdBoxY = 120;
+        let holdBoxSize = 60;
+
+        let nextBoxX = 360;
+        let nextBoxY = 30;
+        let nextBoxSize = 80;
+        return;
+    }
+
+    function void drawScoreText() {
+        do Output.moveCursor(4, 1);
+        do Output.printString("SCORE: ");
+        return;
+    }
+
     //draw hold box with piece preview
-    function void drawHoldBox(Hold hold) {
-        var int boxX, boxY, boxSize;
+    function void drawHoldBox() {
         var Block heldBlock;
-        var int oldX, oldY;
-        
-        let boxX = 15;
-        let boxY = 120;
-        let boxSize = 60;
-        
+
         //draw hold box border
         do Screen.setColor(true);
-        do Screen.drawRectangle(boxX, boxY, boxX + boxSize, boxY + boxSize);
+        do Screen.drawRectangle(holdBoxX, holdBoxY, holdBoxX + holdBoxSize, holdBoxY + holdBoxSize);
         do Screen.setColor(false);
-        do Screen.drawRectangle(boxX + 2, boxY + 2, boxX + boxSize - 2, boxY + boxSize - 2);
-        
+        do Screen.drawRectangle(holdBoxX + 2, holdBoxY + 2, holdBoxX + holdBoxSize - 2, holdBoxY + holdBoxSize - 2);
+
         //draw label
         do Output.moveCursor(10, 1);
         do Output.printString("HOLD");
-        
-        //draw held piece if exists by repositioning temporarily
-        let heldBlock = hold.getHeldBlock();
-        if (~(heldBlock = null)) {
-            let oldX = heldBlock.getX();
-            let oldY = heldBlock.getY();
-            do heldBlock.setPosition(1, 1); //temp position for preview
-            do UI.drawPreviewPiece(heldBlock, boxX + 10, boxY + 20, 8);
-            do heldBlock.setPosition(oldX, oldY); //restore position
-        }
-        
         return;
     }
 
     //draw next piece preview box
-    function void drawNextBox(Bag bag) {
-        var int boxX, boxY, boxSize;
+    function void drawNextBox() {
         var int nextType;
         var Blocks previewBlock;
-        
-        let boxX = 360;
-        let boxY = 30;
-        let boxSize = 80;
-        
+
         //draw next box border
         do Screen.setColor(true);
-        do Screen.drawRectangle(boxX, boxY, boxX + boxSize, boxY + boxSize);
+        do Screen.drawRectangle(nextBoxX, nextBoxY, nextBoxX + nextBoxSize, nextBoxY + nextBoxSize);
         do Screen.setColor(false);
-        do Screen.drawRectangle(boxX + 2, boxY + 2, boxX + boxSize - 2, boxY + boxSize - 2);
-        
+        do Screen.drawRectangle(nextBoxX + 2, nextBoxY + 2, nextBoxX + nextBoxSize - 2, nextBoxY + nextBoxSize - 2);
+
         //draw label
         do Output.moveCursor(2, 46);
         do Output.printString("NEXT");
-        
-        //draw next piece
-        let nextType = bag.peek(0);
-        if (~(nextType = -1)) {
-            let previewBlock = Blocks.new(nextType);
-            do UI.drawPreviewPiece(previewBlock, boxX + 20, boxY + 25, 10);
-            do previewBlock.dispose();
+        return;
+    }
+
+    function void drawHoldPiece(Blocks heldBlock) {
+        var int oldX, oldY;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(holdBoxX + 2, holdBoxY + 2, holdBoxX + holdBoxSize - 2, holdBoxY + holdBoxSize - 2);
+
+        // NOTE: This should never be null
+        if (~(heldBlock = null)) {
+            do UI.drawPreviewPiece(heldBlock, holdBoxX + 10, holdBoxY + 20, 8);
         }
-        
+        return;
+    }
+
+    function void drawNextPiece(Blocks nextBlock) {
+        var int oldX, oldY;
+
+        do Screen.setColor(false);
+        do Screen.drawRectangle(nextBoxX + 2, nextBoxY + 2, nextBoxX + nextBoxSize - 2, nextBoxY + nextBoxSize - 2);
+
+        // NOTE: This should never be null
+        if (~(nextBlock = null)) {
+            do UI.drawPreviewPiece(nextBlock, nextBoxX + 10, nextBoxY + 20, 8);
+        }
         return;
     }
 
@@ -79,25 +94,31 @@ class UI {
         var Array shape;
         var int i, cellX, cellY;
         var int x1, y1, x2, y2;
-        
+
         let shape = block.getShape();
-        
+
         do Screen.setColor(true);
         let i = 0;
-        
+
         while (i < 8) {
             let cellX = shape[i];
             let cellY = shape[i + 1];
-            
+
             let x1 = offsetX + (cellX * cellSize);
             let y1 = offsetY + (cellY * cellSize);
             let x2 = x1 + cellSize - 1;
             let y2 = y1 + cellSize - 1;
-            
+
             do Screen.drawRectangle(x1, y1, x2, y2);
             let i = i + 2;
         }
-        
+
+        return;
+    }
+
+    function void drawScore(int score) {
+        do Output.moveCursor(4, 7);
+        do Output.printInt(score);
         return;
     }
 
@@ -115,9 +136,10 @@ class UI {
     }
 
     //draw all ui elements
-    function void drawAll(Hold hold, Bag bag) {
-        do UI.drawHoldBox(hold);
-        do UI.drawNextBox(bag);
+    function void drawAll() {
+        do UI.drawHoldBox();
+        do UI.drawNextBox();
+        do UI.drawScoreText();
         return;
     }
 }
