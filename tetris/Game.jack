@@ -81,11 +81,11 @@ class Game {
 			return inputRight;
 		}
 		// X: Rotate CW
-		if (key = 88) {
+		if ((key = 88) | (key = 120)) {
 			return inputRotateCW;
 		}
-		// Z: Rotatw CCW
-		if (key = 90) {
+		// Z: Rotate CCW
+		if ((key = 90) | (key = 122)) {
 			return inputRotateCCW;
 		}
 		// Down arrow: Soft drop
@@ -96,7 +96,7 @@ class Game {
 		if (key = 32) {
 			return inputHardDrop;
 		}
-		if (key = 67) {
+		if ((key = 67) | (key = 99)) {
 			return inputHold;
 		}
 		return 0;
