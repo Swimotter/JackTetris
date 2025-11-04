@@ -35,7 +35,7 @@ class Score {
 		}
 
 		//base points based on lines cleared
-		do addClearScore(lines);
+		let points = addClearScore(lines, level);
 
 		//combo bonus (50 points per combo * level)
 		let comboBonus = combo * 50 * level;
@@ -49,24 +49,20 @@ class Score {
 		return;
 	}
 
-	method void addClearScore(int lines) {
+	method int addClearScore(int lines, int level) {
 		if (lines = 1) {
-			let points = 100 * level;
-			return;
+			return 100 * level;
 		}
 		if (lines = 2) {
-			let points = 300 * level;
-			return;
+			return 300 * level;
 		}
 		if (lines = 3) {
-			let points = 500 * level;
-			return;
+			return 500 * level;
 		}
 		if (lines = 4) {
-			let points = 800 * level;
-			return;
+			return 800 * level;
 		} //Tetris!
-		return;
+		return 0;
 	}
 
 	//soft drop points (1 point per cell)
