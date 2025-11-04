@@ -73,7 +73,8 @@ class Bag {
 
 				//refill next bag
 				do fillBagArray(nextBag);
-			} else {
+			}
+			else {
 				//first time initialization
 				do fillBagArray(currentBag);
 				let bagIndex = 0;

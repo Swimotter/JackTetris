@@ -122,19 +122,6 @@ class UI {
 		return;
 	}
 
-	//clear ui regions
-	function void clearHoldArea() {
-		do Screen.setColor(false);
-		do Screen.drawRectangle(10, 115, 90, 195);
-		return;
-	}
-
-	function void clearNextArea() {
-		do Screen.setColor(false);
-		do Screen.drawRectangle(350, 25, 480, 125);
-		return;
-	}
-
 	//draw all ui elements
 	function void drawAll() {
 		do UI.drawHoldBox();

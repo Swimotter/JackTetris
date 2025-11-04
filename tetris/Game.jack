@@ -116,6 +116,8 @@ class Game {
 	}
 
 	method void reset() {
+		do Draw.clearScreen();
+
 		do grid.clear();
 		do hold.reset();
 		do Draw.drawGridBorder(grid);
@@ -211,6 +213,7 @@ class Game {
 					do curBlock.unrotate();
 					do Draw.drawBlock(curBlock, grid, true);
 				}
+				do Draw.drawGrid();
 				return;
 			}
 			if (input = inputRotateCCW) {
@@ -222,6 +225,7 @@ class Game {
 					do curBlock.rotate();
 					do Draw.drawBlock(curBlock, grid, true);
 				}
+				do Draw.drawGrid();
 				return;
 			}
 		}
@@ -318,10 +322,11 @@ class Game {
 
 	method void dispose() {
 		do curBlock.dispose();
-		do heldBlock.dispose();
 		do nextBlock.dispose();
 
+		do score.dispose();
 		do bag.dispose();
+		do hold.dispose();
 		do grid.dispose();
 
 		do Memory.deAlloc(this);

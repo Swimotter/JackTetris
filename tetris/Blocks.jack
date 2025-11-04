@@ -80,7 +80,9 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 3; let shape[7] = 1;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//[]
 			//[]
 			//[]
@@ -89,14 +91,18 @@ class Blocks {
 			let shape[2] = 2; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 2;
 			let shape[6] = 2; let shape[7] = 3;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//
 			//[][][][]
 			let shape[0] = 0; let shape[1] = 2;
 			let shape[2] = 1; let shape[3] = 2;
 			let shape[4] = 2; let shape[5] = 2;
 			let shape[6] = 3; let shape[7] = 2;
-		} if (rotation = 3) {
+			return;
+		}
+		if (rotation = 3) {
 			//    []
 			//    []
 			//    []
@@ -105,6 +111,7 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 2;
 			let shape[6] = 1; let shape[7] = 3;
+			return;
 		}
 		return;
 	}
@@ -118,14 +125,18 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 0; let shape[5] = 2;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//[]
 			//[][][]
 			let shape[0] = 0; let shape[1] = 0;
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 1;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//  [][]
 			//  []
 			//  []
@@ -133,7 +144,9 @@ class Blocks {
 			let shape[2] = 2; let shape[3] = 0;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 3) {
+			return;
+		}
+		if (rotation = 3) {
 			//
 			//[][][]
 			//	  []
@@ -141,6 +154,7 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 2;
+			return;
 		}
 		return;
 	}
@@ -154,14 +168,18 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 2;
 			let shape[6] = 2; let shape[7] = 2;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//[][][]
 			//[]
 			let shape[0] = 0; let shape[1] = 1;
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 0; let shape[7] = 2;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//[][]
 			//  []
 			//  []
@@ -169,13 +187,16 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 0;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 3) {
+			return;
+		}
+		if (rotation = 3) {
 			//    []
 			//[][][]
 			let shape[0] = 2; let shape[1] = 0;
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 1;
+			return;
 		}
 		return;
 	}
@@ -198,7 +219,9 @@ class Blocks {
 			let shape[2] = 2; let shape[3] = 0;
 			let shape[4] = 0; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 1;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//[]
 			//[][]
 			//  []
@@ -206,14 +229,18 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 2;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//	[][]
 			//[][]
 			let shape[0] = 1; let shape[1] = 1;
 			let shape[2] = 2; let shape[3] = 1;
 			let shape[4] = 0; let shape[5] = 2;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 3) {
+			return;
+		}
+		if (rotation = 3) {
 			//[]
 			//[][]
 			//  []
@@ -221,6 +248,7 @@ class Blocks {
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
+			return;
 		}
 		return;
 	}
@@ -233,7 +261,9 @@ class Blocks {
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 1;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//[]
 			//[][]
 			//[]
@@ -241,15 +271,19 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//[][][]
 			//  []
 			let shape[0] = 0; let shape[1] = 1;
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
+			return;
 
-		} if (rotation = 3) {
+		}
+		if (rotation = 3) {
 			//  []
 			//[][]
 			//  []
@@ -257,6 +291,7 @@ class Blocks {
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
+			return;
 		}
 		return;
 	}
@@ -269,7 +304,9 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 0;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 2; let shape[7] = 1;
-		} if (rotation = 1) {
+			return;
+		}
+		if (rotation = 1) {
 			//    []
 			//  [][]
 			//  []
@@ -277,7 +314,9 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 2; let shape[5] = 1;
 			let shape[6] = 1; let shape[7] = 2;
-		} if (rotation = 2) {
+			return;
+		}
+		if (rotation = 2) {
 			//
 			//[][]
 			//  [][]
@@ -285,7 +324,9 @@ class Blocks {
 			let shape[2] = 1; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 2;
 			let shape[6] = 2; let shape[7] = 2;
-		} if (rotation = 3) {
+			return;
+		}
+		if (rotation = 3) {
 			//  []
 			//[][]
 			//[]
@@ -293,6 +334,7 @@ class Blocks {
 			let shape[2] = 0; let shape[3] = 1;
 			let shape[4] = 1; let shape[5] = 1;
 			let shape[6] = 0; let shape[7] = 2;
+			return;
 		}
 		return;
 	}
@@ -319,14 +361,18 @@ class Blocks {
 
 	method void rotate() {
 		let rotation = rotation + 1;
-		if (rotation > 3) {let rotation = 0;}
+		if (rotation > 3) {
+			let rotation = 0;
+		}
 		do updateShape();
 		return;
 	}
 
 	method void unrotate() {
 		let rotation = rotation - 1;
-		if (rotation < 0) {let rotation = 3;}
+		if (rotation < 0) {
+			let rotation = 3;
+		}
 		do updateShape();
 		return;
 	}
@@ -338,11 +384,25 @@ class Blocks {
 	}
 
 	//getters
-	method int getType() {return type;}
-	method int getRotation() {return rotation;}
-	method int getX() {return x;}
-	method int getY() {return y;}
-	method Array getShape() {return shape;}
+	method int getType() {
+		return type;
+	}
+
+	method int getRotation() {
+		return rotation;
+	}
+
+	method int getX() {
+		return x;
+	}
+
+	method int getY() {
+		return y;
+	}
+
+	method Array getShape() {
+		return shape;
+	}
 
 	method void dispose() {
 		do shape.dispose();

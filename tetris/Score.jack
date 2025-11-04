@@ -35,10 +35,7 @@ class Score {
 		}
 
 		//base points based on lines cleared
-		if (lines = 1) {let points = 100 * level;}
-		if (lines = 2) {let points = 300 * level;}
-		if (lines = 3) {let points = 500 * level;}
-		if (lines = 4) {let points = 800 * level;} //Tetris!
+		do addClearScore(lines);
 
 		//combo bonus (50 points per combo * level)
 		let comboBonus = combo * 50 * level;
@@ -49,6 +46,26 @@ class Score {
 		let combo = combo + 1;
 
 		//level up every 10 lines
+		return;
+	}
+
+	method void addClearScore(int lines) {
+		if (lines = 1) {
+			let points = 100 * level;
+			return;
+		}
+		if (lines = 2) {
+			let points = 300 * level;
+			return;
+		}
+		if (lines = 3) {
+			let points = 500 * level;
+			return;
+		}
+		if (lines = 4) {
+			let points = 800 * level;
+			return;
+		} //Tetris!
 		return;
 	}
 
@@ -70,9 +87,17 @@ class Score {
 	}
 
 	//getters
-	method int getScore() {return score;}
-	method int getLines() {return linesCleared;}
-	method int getCombo() {return combo;}
+	method int getScore() {
+		return score;
+	}
+
+	method int getLines() {
+		return linesCleared;
+	}
+
+	method int getCombo() {
+		return combo;
+	}
 
 	method void dispose() {
 		do Memory.deAlloc(this);

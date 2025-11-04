@@ -26,7 +26,6 @@ class Main {
 		do game.dispose();
 
 		do Screen.clearScreen();
-		do MemoryTracker.printReport();
 
 		return;
 	}

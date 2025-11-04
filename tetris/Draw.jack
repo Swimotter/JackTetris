@@ -75,7 +75,9 @@ class Draw {
 	function void drawGridCell(Grid grid, int col, int row) {
 		var int cellValue;
 
-		if (~grid.inBounds(col,row)) {return;}
+		if (~grid.inBounds(col,row)) {
+			return;
+		}
 
 		let cellValue = grid.getCell(col, row);
 		do Draw.drawCellAt(col, row, (cellValue > 0));

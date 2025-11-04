@@ -18,11 +18,11 @@ class Grid {
 	Cell size = 12x12 pixels
 	Grid size = 10x20 cells
 	**/
+	static int cellSize;
+	static int offsetX, offsetY;
 
 	field Array board; //2D array representing grid
 	field int width, height;
-	static int cellSize;
-	static int offsetX, offsetY;
 
 	function void init() {
 		let  cellSize = 12;
@@ -31,7 +31,7 @@ class Grid {
 		return;
 	}
 
-	constructor Grid new (int w, int h) {
+	constructor Grid new(int w, int h) {
 		let width = w;
 		let height = h;
 		let board = Array.new(width * height);
@@ -53,14 +53,18 @@ class Grid {
 	//occupancy check
 	method boolean isEmpty(int x, int y) {
 		var int index;
-		if (~inBounds(x, y)) {return false;}
+		if (~inBounds(x, y)) {
+			return false;
+		}
 		let index = getIndex(x, y);
 		return board[index] = 0;
 	}
 
 	//valid position check for block
 	method boolean isValidCell(int x, int y) {
-		if (~inBounds(x, y)) {return false;}
+		if (~inBounds(x, y)) {
+			return false;
+		}
 		return isEmpty(x, y);
 	}
 
@@ -141,7 +145,9 @@ class Grid {
 	method void clearLine(int row) {
 		var int currentRow, col, index, aboveIndex;
 
-		if (~inBounds(0, row)) {return;}
+		if (~inBounds(0, row)) {
+			return;
+		}
 
 		//start from cleared row and move up
 		let currentRow = row;
@@ -176,7 +182,8 @@ class Grid {
 				do clearLine(row);
 				let linesCleared = linesCleared + 1;
 				let topAffectedRow = row;
-			} else {
+			}
+			else {
 				let row = row - 1;
 			}
 		}
@@ -185,7 +192,9 @@ class Grid {
 
 	method int getCell(int x, int y) {
 		var int index;
-		if (~inBounds(x, y)) {return -1;}
+		if (~inBounds(x, y)) {
+			return -1;
+		}
 		let index = getIndex(x, y);
 		return board[index];
 	}
@@ -202,11 +211,25 @@ class Grid {
 	}
 
 	//getters
-	method int getWidth() {return width;}
-	method int getHeight() {return height;}
-	function int getCellSize() {return cellSize;}
-	function int getOffsetX() {return offsetX;}
-	function int getOffsetY() {return offsetY;}
+	method int getWidth() {
+		return width;
+	}
+
+	method int getHeight() {
+		return height;
+	}
+
+	function int getCellSize() {
+		return cellSize;
+	}
+
+	function int getOffsetX() {
+		return offsetX;
+	}
+
+	function int getOffsetY() {
+		return offsetY;
+	}
 
 	method void dispose() {
 		do board.dispose();

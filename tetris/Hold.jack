@@ -59,9 +59,17 @@ class Hold {
 	}
 
 	//getters
-	method Blocks getHeldBlock() {return heldBlock;}
-	method boolean canHold() {return canSwap;}
-	method boolean isEmpty() {return heldBlock = null;}
+	method Blocks getHeldBlock() {
+		return heldBlock;
+	}
+
+	method boolean canHold() {
+		return canSwap;
+	}
+
+	method boolean isEmpty() {
+		return heldBlock = null;
+	}
 
 	method int getHeldType() { // Get held block type for UI display
 		if (heldBlock = null) {
