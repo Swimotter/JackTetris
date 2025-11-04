@@ -108,8 +108,6 @@ class Game {
 		let hold = Hold.new();
 		let score = Score.new();
 
-		do UI.drawAll();
-
 		do reset();
 
 		return this;
@@ -117,6 +115,7 @@ class Game {
 
 	method void reset() {
 		do Draw.clearScreen();
+		do UI.drawAll();
 
 		do grid.clear();
 		do hold.reset();
@@ -207,25 +206,21 @@ class Game {
 			if (input = inputRotateCW) {
 				do Draw.drawBlock(curBlock, grid, false);
 				do curBlock.rotate();
-				do Draw.drawBlock(curBlock, grid, true);
 				if (~grid.canPlaceBlock(curBlock)) {
-					do Draw.drawBlock(curBlock, grid, false);
 					do curBlock.unrotate();
-					do Draw.drawBlock(curBlock, grid, true);
 				}
-				do Draw.drawGrid();
+				do Draw.drawGrid(grid);
+				do Draw.drawBlock(curBlock, grid, true);
 				return;
 			}
 			if (input = inputRotateCCW) {
 				do Draw.drawBlock(curBlock, grid, false);
 				do curBlock.unrotate();
-				do Draw.drawBlock(curBlock, grid, true);
 				if (~grid.canPlaceBlock(curBlock)) {
-					do Draw.drawBlock(curBlock, grid, false);
 					do curBlock.rotate();
-					do Draw.drawBlock(curBlock, grid, true);
 				}
-				do Draw.drawGrid();
+				do Draw.drawGrid(grid);
+				do Draw.drawBlock(curBlock, grid, true);
 				return;
 			}
 		}

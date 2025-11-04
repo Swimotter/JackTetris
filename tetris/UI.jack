@@ -32,8 +32,6 @@ class UI {
 
 	//draw hold box with piece preview
 	function void drawHoldBox() {
-		var Block heldBlock;
-
 		//draw hold box border
 		do Screen.setColor(true);
 		do Screen.drawRectangle(holdBoxX, holdBoxY, holdBoxX + holdBoxSize, holdBoxY + holdBoxSize);
@@ -48,9 +46,6 @@ class UI {
 
 	//draw next piece preview box
 	function void drawNextBox() {
-		var int nextType;
-		var Blocks previewBlock;
-
 		//draw next box border
 		do Screen.setColor(true);
 		do Screen.drawRectangle(nextBoxX, nextBoxY, nextBoxX + nextBoxSize, nextBoxY + nextBoxSize);
@@ -119,6 +114,19 @@ class UI {
 	function void drawScore(int score) {
 		do Output.moveCursor(4, 7);
 		do Output.printInt(score);
+		return;
+	}
+
+	//clear ui regions
+	function void clearHoldArea() {
+		do Screen.setColor(false);
+		do Screen.drawRectangle(10, 115, 90, 195);
+		return;
+	}
+
+	function void clearNextArea() {
+		do Screen.setColor(false);
+		do Screen.drawRectangle(350, 25, 480, 125);
 		return;
 	}
 
