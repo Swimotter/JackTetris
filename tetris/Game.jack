@@ -1,0 +1,330 @@
+class Game {
+	// Gravity at given levels
+	// Ticks per tile
+	static Array gravity;
+	static int frameRate;
+	// Time that a block can be grounded while being moveable
+	static int lockDelay;
+
+	static int inputLeft, inputRight, inputRotateCW, inputRotateCCW, inputSoftDrop, inputHardDrop, inputHold;
+
+	field Grid grid;
+	field Bag bag;
+	field Hold hold;
+	field Score score;
+
+	field Blocks curBlock;
+	field Blocks nextBlock;
+
+	field int level;
+
+	field int time;
+	// Time when a block last started falling
+	field int fallTime;
+	field int lockTime;
+	field boolean waitingForBlock;
+
+	field int gravityOveride;
+
+	field int linesUntilNextLevel;
+
+	field int lastInputTime;
+	field int lastInput;
+
+	function void init() {
+		let frameRate = 60;
+		// frameRate / 2
+		let lockDelay = 30;
+
+		let inputLeft = 1;
+		let inputRight = 2;
+		let inputRotateCW = 4;
+		let inputRotateCCW = 8;
+		let inputSoftDrop = 16;
+		let inputHardDrop = 32;
+		let inputHold = 64;
+
+		// https://harddrop.com/wiki/Tetris_Worlds#Gravity
+		// round(pow(0.8 - (l * 0.007), l) * frameRate)
+		let gravity = Array.new(15);
+		let gravity[0]  = 60;
+		let gravity[1]  = 48;
+		let gravity[2]  = 37;
+		let gravity[3]  = 28;
+		let gravity[4]  = 21;
+		let gravity[5]  = 16;
+		let gravity[6]  = 11;
+		let gravity[7]  = 8;
+		let gravity[8]  = 6;
+		let gravity[9]  = 4;
+		let gravity[10] = 3;
+		let gravity[11] = 2;
+		let gravity[12] = 1;
+		let gravity[13] = 1;
+		let gravity[14] = 1;
+
+		do Blocks.init();
+		do Grid.init();
+		do UI.init();
+		return;
+	}
+
+	function int getInput() {
+		var char key;
+		let key = Keyboard.keyPressed();
+		// Left arrow: Move left
+		if (key = 130) {
+			return inputLeft;
+		}
+		// Right arrow: Move right
+		if (key = 132) {
+			return inputRight;
+		}
+		// X: Rotate CW
+		if (key = 88) {
+			return inputRotateCW;
+		}
+		// Z: Rotatw CCW
+		if (key = 90) {
+			return inputRotateCCW;
+		}
+		// Down arrow: Soft drop
+		if (key = 133) {
+			return inputSoftDrop;
+		}
+		// Space: Hard drop
+		if (key = 32) {
+			return inputHardDrop;
+		}
+		if (key = 67) {
+			return inputHold;
+		}
+		return 0;
+	}
+
+	constructor Game new(int seed) {
+		let grid = Grid.new(10, 20);
+		let bag = Bag.new(seed);
+		let hold = Hold.new();
+		let score = Score.new();
+
+		do reset();
+
+		return this;
+	}
+
+	method void reset() {
+		do Draw.clearScreen();
+		do UI.drawAll();
+
+		do grid.clear();
+		do hold.reset();
+		do Draw.drawGridBorder(grid);
+
+		let nextBlock = Blocks.new(bag.getNextBlock());
+
+		let level = 0;
+		let waitingForBlock = true;
+		let lockTime = 0;
+		return;
+	}
+
+	method void tick() {
+		var int input;
+
+		if (waitingForBlock) {
+			do spawnBlock();
+			do UI.drawNextPiece(nextBlock);
+			do Draw.drawBlock(curBlock, grid, true);
+		}
+		else {
+			let input = Game.getInput();
+			if ((input = inputHold) & (hold.canHold())) {
+				do Draw.drawBlock(curBlock, grid, false);
+				let curBlock = hold.holdPiece(curBlock);
+				do UI.drawHoldPiece(hold.getHeldBlock());
+				if (curBlock = null) {
+					let waitingForBlock = true;
+				}
+				else {
+					do Draw.drawBlock(curBlock, grid, true);
+				}
+			}
+			else {
+				let gravityOveride = 60;
+				if (input > 0) {
+					// Force the first input from to always trigger
+					if (~(input = lastInput)) {
+						let lastInput = input;
+						let lastInputTime = time;
+					}
+					// Only do movements every 0.05s
+					// Only do rotations every 0.15s
+					// Only allow hard drops on the first press
+					do moveBlock(input, (time - lastInputTime) - ((time - lastInputTime) / 3 * 3) = 0, (time - lastInputTime) - ((time - lastInputTime) / 9 * 9) = 0, lastInputTime = time);
+				}
+				else {
+					let lastInput = input;
+				}
+
+				do updateBlock();
+			}
+		}
+
+		let time = time + 1;
+		return;
+	}
+
+	method void spawnBlock() {
+		let curBlock = nextBlock;
+		let nextBlock = Blocks.new(bag.getNextBlock());
+		let fallTime = time;
+		let waitingForBlock = false;
+		return;
+	}
+
+	method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotation, boolean firstPress) {
+		if (doBlockMovement) {
+			if (input = inputLeft) {
+				if (grid.canMoveTo(curBlock, curBlock.getX() - 1, curBlock.getY())) {
+					do Draw.drawBlock(curBlock, grid, false);
+					do curBlock.moveLeft();
+					do Draw.drawBlock(curBlock, grid, true);
+				}
+				return;
+			}
+			if (input = inputRight) {
+				if (grid.canMoveTo(curBlock, curBlock.getX() + 1, curBlock.getY())) {
+					do Draw.drawBlock(curBlock, grid, false);
+					do curBlock.moveRight();
+					do Draw.drawBlock(curBlock, grid, true);
+				}
+				return;
+			}
+		}
+		if (doBlockRotation) {
+			if (input = inputRotateCW) {
+				do Draw.drawBlock(curBlock, grid, false);
+				do curBlock.rotate();
+				if (~grid.canPlaceBlock(curBlock)) {
+					do curBlock.unrotate();
+				}
+				do Draw.drawGrid(grid);
+				do Draw.drawBlock(curBlock, grid, true);
+				return;
+			}
+			if (input = inputRotateCCW) {
+				do Draw.drawBlock(curBlock, grid, false);
+				do curBlock.unrotate();
+				if (~grid.canPlaceBlock(curBlock)) {
+					do curBlock.rotate();
+				}
+				do Draw.drawGrid(grid);
+				do Draw.drawBlock(curBlock, grid, true);
+				return;
+			}
+		}
+		if (input = inputSoftDrop) {
+			// Force at least one down
+			let gravityOveride = 3;
+			return;
+		}
+		if (firstPress) {
+			if (input = inputHardDrop) {
+				do Draw.drawBlock(curBlock, grid, false);
+				while (grid.canMoveTo(curBlock, curBlock.getX(), curBlock.getY() + 1)) {
+					do curBlock.moveDown();
+				}
+				do placeBlock();
+
+				return;
+			}
+		}
+		return;
+	}
+
+	method void updateBlock() {
+		var int blockTime;
+		var int fallInterval;
+
+		// In air
+		if (grid.canMoveTo(curBlock, curBlock.getX(), curBlock.getY() + 1)) {
+			// We started falling again
+			if (lockTime > 0) {
+				let lockTime = 0;
+				let fallTime = time;
+			}
+
+			let blockTime = time - fallTime;
+			if (gravityOveride < gravity[level]) {
+				let fallInterval = gravityOveride;
+			}
+			else {
+				let fallInterval = gravity[level];
+			}
+			if (~(blockTime = 0) & (blockTime - (blockTime / fallInterval * fallInterval) = 0)) {
+				do Draw.drawBlock(curBlock, grid, false);
+				do curBlock.moveDown();
+				do Draw.drawBlock(curBlock, grid, true);
+			}
+		}
+		// On ground
+		else {
+			let lockTime = lockTime + 1;
+
+			if ((lockTime > lockDelay) | (lockTime = lockDelay)) {
+				do placeBlock();
+				return;
+			}
+		}
+
+
+		return;
+	}
+
+	method void placeBlock() {
+		var int linesCleared;
+
+		// Does this set our copy of curBlock to null?
+		do grid.placeBlock(curBlock);
+		do Draw.drawPlacedBlock(curBlock, grid);
+		let waitingForBlock = true;
+		let lockTime = 0;
+		do hold.enableSwap();
+		let linesCleared = grid.clearLines();
+		do Draw.drawGrid(grid);
+		// NOTE: It is very easy to hit the max int value
+		do score.addLineScore(linesCleared, level);
+		do updateLevel(linesCleared);
+		do UI.drawScore(score.getScore());
+		do curBlock.dispose();
+		return;
+	}
+
+	method void updateLevel(int linesCleared) {
+		let linesUntilNextLevel = linesUntilNextLevel - linesCleared;
+		if (~(linesUntilNextLevel > 0)) {
+			// Store roll-over lines
+			let linesUntilNextLevel = 10 + linesUntilNextLevel;
+			let level = level + 1;
+		}
+		return;
+	}
+
+	method boolean finished() {
+		return true;
+	}
+
+	method void dispose() {
+		do curBlock.dispose();
+		do nextBlock.dispose();
+
+		do score.dispose();
+		do bag.dispose();
+		do hold.dispose();
+		do grid.dispose();
+
+		do Memory.deAlloc(this);
+		return;
+	}
+}

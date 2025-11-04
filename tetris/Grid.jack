@@ -1,0 +1,239 @@
+class Grid {
+	/**
+	 0                196px              316px            512px
+	 ├──────────────────┼──────────────────┼──────────────┤
+   0 ┤                  │                  │              │
+	 │                  │                  │              │
+   8 ┤                  ┌──────────────────┐              │
+	 │                  │                  │              │
+	 │     LEFT         │   TETRIS BOARD   │    RIGHT     │
+	 │    SPACE         │   (120×240 px)   │    SPACE     │
+	 │   (196 px)       │                  │   (196 px)   │
+	 │                  │                  │              │
+ 248 ┤                  └──────────────────┘              │
+	 │                  │                  │              │
+ 256 ┴──────────────────┴──────────────────┴──────────────┘
+	 0                196px              316px            512px
+
+	Cell size = 12x12 pixels
+	Grid size = 10x20 cells
+	**/
+	static int cellSize;
+	static int offsetX, offsetY;
+
+	field Array board; //2D array representing grid
+	field int width, height;
+
+	function void init() {
+		let  cellSize = 12;
+		let  offsetX = 195; // (512 - (10*12)) / 2 = 196
+		let  offsetY = 7; // (256 - (20*12)) / 2 = 8
+		return;
+	}
+
+	constructor Grid new(int w, int h) {
+		let width = w;
+		let height = h;
+		let board = Array.new(width * height);
+
+		do clear();
+		return this;
+	}
+
+	//convert 2D coords to 1D index
+	method int getIndex(int x, int y) {
+		return (y * width) + x;
+	}
+
+	//bounds check
+	method boolean inBounds(int x, int y) {
+		return (~((x < 0) | (x > (width - 1)) | (y < 0) | (y > (height - 1)))); //all parenthesis necessary
+	}
+
+	//occupancy check
+	method boolean isEmpty(int x, int y) {
+		var int index;
+		if (~inBounds(x, y)) {
+			return false;
+		}
+		let index = getIndex(x, y);
+		return board[index] = 0;
+	}
+
+	//valid position check for block
+	method boolean isValidCell(int x, int y) {
+		if (~inBounds(x, y)) {
+			return false;
+		}
+		return isEmpty(x, y);
+	}
+
+	method boolean canMoveTo(Blocks block, int newX, int newY) {
+		var Array shape;
+		var int i, cellX, cellY;
+		let shape = block.getShape();
+		let i = 0;
+		while (i < 8) { //4 pairs of (dx, dy)
+			let cellX = newX + shape[i];
+			let cellY = newY + shape[i + 1];
+
+			//Check bounds and occupancy
+			if (~isValidCell(cellX, cellY)) {
+				return false;
+			}
+
+			let i = i + 2;
+		}
+		return true;
+	}
+
+	//check if block can be placed at its current position
+	method boolean canPlaceBlock(Blocks block) {
+		var Array shape;
+		var int i, cellX, cellY;
+
+		let shape = block.getShape();
+		let i = 0;
+
+		while (i < 8) {
+			let cellX = block.getX() + shape[i];
+			let cellY = block.getY() + shape[i + 1];
+			if (~isValidCell(cellX, cellY)) {
+				return false;
+			}
+			let i = i + 2;
+		}
+		return true;
+	}
+
+	//place block on grid (mark cells occupied)
+	method void placeBlock(Blocks block) {
+		var Array shape;
+		var int i, cellX, cellY, index;
+		var int blockType;
+
+		let shape = block.getShape();
+		let blockType = block.getType() + 1; //store as 1-7 to differentiate from empty(0)
+		let i = 0;
+
+		while (i < 8) {
+			let cellX = block.getX() + shape[i];
+			let cellY = block.getY() + shape[i + 1];
+
+			if (inBounds(cellX, cellY)) {
+				let index = getIndex(cellX, cellY);
+				let board[index] = blockType;
+			}
+			let i = i + 2; //next pair
+		}
+		return;
+	}
+
+	method boolean isLineFull(int row) {
+		var int col;
+		let col = 0;
+
+		while (col < width) {
+			if (isEmpty(col, row)) {
+				return false;
+			}
+			let col = col + 1;
+		}
+		return true;
+	}
+
+	method void clearLine(int row) {
+		var int currentRow, col, index, aboveIndex;
+
+		if (~inBounds(0, row)) {
+			return;
+		}
+
+		//start from cleared row and move up
+		let currentRow = row;
+		while (currentRow > 0) {
+			let col = 0;
+			while (col < width) {
+				let index = getIndex(col, currentRow);
+				let aboveIndex = getIndex(col, currentRow - 1);
+				let board[index] = board[aboveIndex];
+				let col = col + 1;
+			}
+			let currentRow = currentRow - 1;
+		}
+		//Clear top row
+		let col = 0;
+		while (col < width) {
+			let index = getIndex(col, 0);
+			let board[index] = 0;
+			let col = col + 1;
+		}
+		return;
+	}
+
+	method int clearLines() {
+		var int row, linesCleared, topAffectedRow;
+		let row = height - 1;
+		let linesCleared = 0;
+		let topAffectedRow = height;
+
+		while (row > -1) {
+			if (isLineFull(row)) {
+				do clearLine(row);
+				let linesCleared = linesCleared + 1;
+				let topAffectedRow = row;
+			}
+			else {
+				let row = row - 1;
+			}
+		}
+		return linesCleared;
+	}
+
+	method int getCell(int x, int y) {
+		var int index;
+		if (~inBounds(x, y)) {
+			return -1;
+		}
+		let index = getIndex(x, y);
+		return board[index];
+	}
+
+	method void clear() {
+		var int i;
+		let i = 0;
+
+		while (i < (width * height)) {
+			let board[i] = 0;
+			let i = i + 1;
+		}
+		return;
+	}
+
+	//getters
+	method int getWidth() {
+		return width;
+	}
+
+	method int getHeight() {
+		return height;
+	}
+
+	function int getCellSize() {
+		return cellSize;
+	}
+
+	function int getOffsetX() {
+		return offsetX;
+	}
+
+	function int getOffsetY() {
+		return offsetY;
+	}
+
+	method void dispose() {
+		do board.dispose();
+		do Memory.deAlloc(this);
+		return;
+	}
+}

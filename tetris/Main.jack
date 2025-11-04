@@ -1,0 +1,32 @@
+class Main {
+	function void main() {
+		var Game game;
+		var boolean playing;
+
+		do Game.init();
+
+		let playing = true;
+
+		let game = Game.new(0);
+
+		// do Output.moveCursor(10, 18);
+		// do Output.printString("Press enter to begin playing!");
+		// while (Keyboard.readChar() = 128) {
+			// do Screen.clearScreen();
+			while (true) {
+				do game.tick();
+				// Wait
+				do Sys.wait(17);
+				// if (Keyboard.keyPressed() = 128) {
+				//     let playing = false;
+				// }
+			}
+		// }
+
+		do game.dispose();
+
+		do Screen.clearScreen();
+
+		return;
+	}
+}
