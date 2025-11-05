@@ -130,11 +130,12 @@ class UI {
 		return;
 	}
 
-	//draw all ui elements
+	//draw all static ui elements
 	function void drawAll() {
 		do UI.drawHoldBox();
 		do UI.drawNextBox();
 		do UI.drawScoreText();
+		do UI.drawScore(0);
 		return;
 	}
 }
