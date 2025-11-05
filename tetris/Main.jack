@@ -1,31 +1,46 @@
 class Main {
 	function void main() {
 		var Game game;
+		var int seed;
 		var boolean playing;
-
-		do Game.init();
+		var char c;
 
 		let playing = true;
 
-		let game = Game.new(0);
+		do Game.init();
 
-		// do Output.moveCursor(10, 18);
-		// do Output.printString("Press enter to begin playing!");
-		// while (Keyboard.readChar() = 128) {
-			// do Screen.clearScreen();
-			while (true) {
-				do game.tick();
-				// Wait
-				do Sys.wait(17);
-				// if (Keyboard.keyPressed() = 128) {
-				//     let playing = false;
-				// }
+		while (playing) {
+			do Screen.clearScreen();
+			do Output.moveCursor(10, 18);
+			do Output.printString("Press enter to begin playing!");
+			let c = 0;
+
+			while (c = 0) {
+				let c = Keyboard.keyPressed();
+				let seed = seed + 1;
 			}
-		// }
+			if ((c = 128) & (game = null)) {
+				let game = Game.new(seed);
+			}
 
-		do game.dispose();
+			if (c = 128) {
+				do game.reset();
+				while (~Game.isFinished()) {
+					do game.tick();
+					// Wait
+					do Sys.wait(17);
+				}
+				// Force any keys to be released
+				do Keyboard.readChar();
+			}
+			else {
+				let playing = false;
+			}
+		}
 
-		do Screen.clearScreen();
+		if (~(game = null)) {
+			do game.dispose();
+		}
 
 		return;
 	}

@@ -6,6 +6,8 @@ class Game {
 	// Time that a block can be grounded while being moveable
 	static int lockDelay;
 
+	static boolean finished;
+
 	static int inputLeft, inputRight, inputRotateCW, inputRotateCCW, inputSoftDrop, inputHardDrop, inputHold;
 
 	field Grid grid;
@@ -99,6 +101,11 @@ class Game {
 		if ((key = 67) | (key = 99)) {
 			return inputHold;
 		}
+		// Escape: End game
+		if (key = 140) {
+			let finished = true;
+			return 0;
+		}
 		return 0;
 	}
 
@@ -119,6 +126,8 @@ class Game {
 
 		do grid.clear();
 		do hold.reset();
+		do score.reset();
+
 		do Draw.drawGridBorder(grid);
 
 		let nextBlock = Blocks.new(bag.getNextBlock());
@@ -126,6 +135,7 @@ class Game {
 		let level = 0;
 		let waitingForBlock = true;
 		let lockTime = 0;
+		let finished = false;
 		return;
 	}
 
@@ -137,38 +147,37 @@ class Game {
 			do UI.drawNextPiece(nextBlock);
 			do Draw.drawBlock(curBlock, grid, true);
 		}
-		else {
-			let input = Game.getInput();
-			if ((input = inputHold) & (hold.canHold())) {
-				do Draw.drawBlock(curBlock, grid, false);
-				let curBlock = hold.holdPiece(curBlock);
-				do UI.drawHoldPiece(hold.getHeldBlock());
-				if (curBlock = null) {
-					let waitingForBlock = true;
-				}
-				else {
-					do Draw.drawBlock(curBlock, grid, true);
-				}
+
+		let input = Game.getInput();
+		if ((input = inputHold) & (hold.canHold())) {
+			do Draw.drawBlock(curBlock, grid, false);
+			let curBlock = hold.holdPiece(curBlock);
+			do UI.drawHoldPiece(hold.getHeldBlock());
+			if (curBlock = null) {
+				let waitingForBlock = true;
 			}
 			else {
-				let gravityOveride = 60;
-				if (input > 0) {
-					// Force the first input from to always trigger
-					if (~(input = lastInput)) {
-						let lastInput = input;
-						let lastInputTime = time;
-					}
-					// Only do movements every 0.05s
-					// Only do rotations every 0.15s
-					// Only allow hard drops on the first press
-					do moveBlock(input, (time - lastInputTime) - ((time - lastInputTime) / 3 * 3) = 0, (time - lastInputTime) - ((time - lastInputTime) / 9 * 9) = 0, lastInputTime = time);
-				}
-				else {
-					let lastInput = input;
-				}
-
-				do updateBlock();
+				do Draw.drawBlock(curBlock, grid, true);
 			}
+		}
+		else {
+			let gravityOveride = 60;
+			if (input > 0) {
+				// Force the first input from to always trigger
+				if (~(input = lastInput)) {
+					let lastInput = input;
+					let lastInputTime = time;
+				}
+				// Only do movements every 0.05s
+				// Only do rotations every 0.15s
+				// Only allow hard drops on the first press
+				do moveBlock(input, (time - lastInputTime) - ((time - lastInputTime) / 3 * 3) = 0, (time - lastInputTime) - ((time - lastInputTime) / 9 * 9) = 0, lastInputTime = time);
+			}
+			else {
+				let lastInput = input;
+			}
+
+			do updateBlock();
 		}
 
 		let time = time + 1;
@@ -180,6 +189,12 @@ class Game {
 		let nextBlock = Blocks.new(bag.getNextBlock());
 		let fallTime = time;
 		let waitingForBlock = false;
+
+		// Check if we spawned inside a block -> game over
+		if (~grid.canPlaceBlock(curBlock)) {
+			let finished = true;
+		}
+
 		return;
 	}
 
@@ -278,7 +293,6 @@ class Game {
 			}
 		}
 
-
 		return;
 	}
 
@@ -311,13 +325,17 @@ class Game {
 		return;
 	}
 
-	method boolean finished() {
-		return true;
+	function boolean isFinished() {
+		return finished;
 	}
 
 	method void dispose() {
-		do curBlock.dispose();
-		do nextBlock.dispose();
+		if (~(curBlock = null)) {
+			do curBlock.dispose();
+		}
+		if (~(nextBlock = null)) {
+			do nextBlock.dispose();
+		}
 
 		do score.dispose();
 		do bag.dispose();

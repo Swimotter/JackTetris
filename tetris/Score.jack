@@ -15,12 +15,10 @@ class Score {
 	**/
 
 	field int score;
-	field int linesCleared;
 	field int combo;
 
 	constructor Score new() {
 		let score = 0;
-		let linesCleared = 0;
 		let combo = 0;
 		return this;
 	}
@@ -42,7 +40,6 @@ class Score {
 		let points = points + comboBonus;
 
 		let score = score + points;
-		let linesCleared = linesCleared + lines;
 		let combo = combo + 1;
 
 		//level up every 10 lines
@@ -82,13 +79,15 @@ class Score {
 		return;
 	}
 
+	method void reset() {
+		do resetCombo();
+		let score = 0;
+		return;
+	}
+
 	//getters
 	method int getScore() {
 		return score;
-	}
-
-	method int getLines() {
-		return linesCleared;
 	}
 
 	method int getCombo() {
