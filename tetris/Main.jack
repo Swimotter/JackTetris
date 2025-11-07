@@ -4,8 +4,12 @@ class Main {
 		var int seed;
 		var boolean playing;
 		var char c;
+		// Time in milliseconds
+		var int frameTime;
 
 		let playing = true;
+		// 1/60th of a second
+		let frameTime = 17;
 
 		do Game.init();
 
@@ -17,7 +21,7 @@ class Main {
 
 			while (c = 0) {
 				let c = Keyboard.keyPressed();
-				let seed = seed + 1;
+				let seed = seed + 1000;
 			}
 			if ((c = 128) & (game = null)) {
 				let game = Game.new(seed);
@@ -27,8 +31,7 @@ class Main {
 				do game.reset();
 				while (~Game.isFinished()) {
 					do game.tick();
-					// Wait
-					do Sys.wait(17);
+					do Sys.wait(frameTime);
 				}
 				// Force any keys to be released
 				do Keyboard.readChar();

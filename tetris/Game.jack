@@ -109,6 +109,10 @@ class Game {
 		return 0;
 	}
 
+	function bool canDoInput(int time, int lastInputTime, int cooldown) {
+		return (time - lastInputTime) - ((time - lastInputTime) / cooldown * cooldown) = 0;
+	}
+
 	constructor Game new(int seed) {
 		let grid = Grid.new(10, 20);
 		let bag = Bag.new(seed);
@@ -161,7 +165,7 @@ class Game {
 			}
 		}
 		else {
-			let gravityOveride = 60;
+			let gravityOveride = gravity[0];
 			if (input > 0) {
 				// Force the first input from to always trigger
 				if (~(input = lastInput)) {
@@ -171,7 +175,7 @@ class Game {
 				// Only do movements every 0.05s
 				// Only do rotations every 0.15s
 				// Only allow hard drops on the first press
-				do moveBlock(input, (time - lastInputTime) - ((time - lastInputTime) / 3 * 3) = 0, (time - lastInputTime) - ((time - lastInputTime) / 9 * 9) = 0, lastInputTime = time);
+				do moveBlock(input, Game.canDoInput(time, lastInputTime, 3), Game.canDoInput(time, lastInputTime, 9), lastInputTime = time);
 			}
 			else {
 				let lastInput = input;
