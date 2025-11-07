@@ -1,0 +1,50 @@
+class Main {
+	function void main() {
+		var Game game;
+		var int seed;
+		var boolean playing;
+		var char c;
+		// Time in milliseconds
+		var int frameTime;
+
+		let playing = true;
+		// 1/60th of a second
+		let frameTime = 17;
+
+		do Game.init();
+
+		while (playing) {
+			do Screen.clearScreen();
+			do Output.moveCursor(10, 18);
+			do Output.printString("Press enter to begin playing!");
+			let c = 0;
+
+			while (c = 0) {
+				let c = Keyboard.keyPressed();
+				let seed = seed + 1000;
+			}
+			if ((c = 128) & (game = null)) {
+				let game = Game.new(seed);
+			}
+
+			if (c = 128) {
+				do game.reset();
+				while (~Game.isFinished()) {
+					do game.tick();
+					do Sys.wait(frameTime);
+				}
+				// Force any keys to be released
+				do Keyboard.readChar();
+			}
+			else {
+				let playing = false;
+			}
+		}
+
+		if (~(game = null)) {
+			do game.dispose();
+		}
+
+		return;
+	}
+}
