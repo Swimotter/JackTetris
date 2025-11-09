@@ -109,7 +109,7 @@ class Game {
 		return 0;
 	}
 
-	function bool canDoInput(int time, int lastInputTime, int cooldown) {
+	function boolean canDoInput(int time, int lastInputTime, int cooldown) {
 		return (time - lastInputTime) - ((time - lastInputTime) / cooldown * cooldown) = 0;
 	}
 
