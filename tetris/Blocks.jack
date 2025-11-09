@@ -17,7 +17,7 @@ class Blocks {
 	field int type;
 	field int rotation; //0-3
 	field int x, y;
-	field Array shape; //store shape array as field to avoid reallocation
+	field Array rotations; //Array of 4 rotations, each rotation is an Array of 8 ints (x,y pairs for 4 cells)
 
 	function void init() {
 		let I = 0;
@@ -36,306 +36,322 @@ class Blocks {
 		let x = 3; //start at top-center
 		let y = 0;
 
-		let shape = Array.new(8); //4 pairs of (dx, dy) offset from origin
-		do updateShape();
+		//create array to hold 4 rotations
+		let rotations = Array.new(4);
+
+		if (type = I) {do initIShape();}
+		if (type = J) {do initJShape();}
+		if (type = L) {do initLShape();}
+		if (type = O) {do initOShape();}
+		if (type = S) {do initSShape();}
+		if (type = T) {do initTShape();}
+		if (type = Z) {do initZShape();}
+
 		return this;
 	}
 
-	method void updateShape() {
-		if (type = 0) {
-			do setIShape();
-			return;
-		}
-		if (type = 1) {
-			do setJShape();
-			return;
-		}
-		if (type = 2) {
-			do setLShape();
-			return;
-		}
-		if (type = 3) {
-			do setOShape();
-			return;
-		}
-		if (type = 4) {
-			do setSShape();
-			return;
-		}
-		if (type = 5) {
-			do setTShape();
-			return;
-		}
-		if (type = 6) {
-			do setZShape();
-			return;
-		}
+	method void initIShape() {
+		var Array rot0, rot1, rot2, rot3;
+
+		//Rotation 0
+		//[][][][]
+		let rot0 = Array.new(8);
+		let rot0[0] = 0; let rot0[1] = 1;
+		let rot0[2] = 1; let rot0[3] = 1;
+		let rot0[4] = 2; let rot0[5] = 1;
+		let rot0[6] = 3; let rot0[7] = 1;
+		let rotations[0] = rot0;
+
+		//Rotation 1
+		//[]
+		//[]
+		//[]
+		//[]
+		let rot1 = Array.new(8);
+		let rot1[0] = 2; let rot1[1] = 0;
+		let rot1[2] = 2; let rot1[3] = 1;
+		let rot1[4] = 2; let rot1[5] = 2;
+		let rot1[6] = 2; let rot1[7] = 3;
+		let rotations[1] = rot1;
+
+		//Rotation 2
+		//[][][][]
+		let rot2 = Array.new(8);
+		let rot2[0] = 0; let rot2[1] = 2;
+		let rot2[2] = 1; let rot2[3] = 2;
+		let rot2[4] = 2; let rot2[5] = 2;
+		let rot2[6] = 3; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//    []
+		//    []
+		//    []
+		//    []
+		let rot3 = Array.new(8);
+		let rot3[0] = 1; let rot3[1] = 0;
+		let rot3[2] = 1; let rot3[3] = 1;
+		let rot3[4] = 1; let rot3[5] = 2;
+		let rot3[6] = 1; let rot3[7] = 3;
+		let rotations[3] = rot3;
+		
 		return;
 	}
 
-	method void setIShape() {
-		if (rotation = 0) {
-			//[][][][]
-			let shape[0] = 0; let shape[1] = 1;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 3; let shape[7] = 1;
-			return;
-		}
-		if (rotation = 1) {
-			//[]
-			//[]
-			//[]
-			//[]
-			let shape[0] = 2; let shape[1] = 0;
-			let shape[2] = 2; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 2;
-			let shape[6] = 2; let shape[7] = 3;
-			return;
-		}
-		if (rotation = 2) {
-			//
-			//[][][][]
-			let shape[0] = 0; let shape[1] = 2;
-			let shape[2] = 1; let shape[3] = 2;
-			let shape[4] = 2; let shape[5] = 2;
-			let shape[6] = 3; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 3) {
-			//    []
-			//    []
-			//    []
-			//    []
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 2;
-			let shape[6] = 1; let shape[7] = 3;
-			return;
-		}
+	method void initJShape() {
+		var Array rot0, rot1, rot2, rot3;
+
+		//Rotation 0
+		//	[]
+		//	[]
+		//[][]
+		let rot0 = Array.new(8);
+		let rot0[0] = 1; let rot0[1] = 0;
+		let rot0[2] = 1; let rot0[3] = 1;
+		let rot0[4] = 0; let rot0[5] = 2;
+		let rot0[6] = 1; let rot0[7] = 2;
+		let rotations[0] = rot0;
+
+		//Rotation 1
+		//[]
+		//[][][]
+		let rot1 = Array.new(8);
+		let rot1[0] = 0; let rot1[1] = 0;
+		let rot1[2] = 0; let rot1[3] = 1;
+		let rot1[4] = 1; let rot1[5] = 1;
+		let rot1[6] = 2; let rot1[7] = 1;
+		let rotations[1] = rot1;
+
+		//Rotation 2
+		//  [][]
+		//  []
+		//  []
+		let rot2 = Array.new(8);
+		let rot2[0] = 1; let rot2[1] = 0;
+		let rot2[2] = 2; let rot2[3] = 0;
+		let rot2[4] = 1; let rot2[5] = 1;
+		let rot2[6] = 1; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//    []
+		//[][][]
+		let rot3 = Array.new(8);
+		let rot3[0] = 0; let rot3[1] = 1;
+		let rot3[2] = 1; let rot3[3] = 1;
+		let rot3[4] = 2; let rot3[5] = 1;
+		let rot3[6] = 2; let rot3[7] = 2;
+		let rotations[3] = rot3;
+		
 		return;
 	}
 
-	method void setJShape() {
-		if (rotation = 0) {
-			//	[]
-			//	[]
-			//[][]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 0; let shape[5] = 2;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 1) {
-			//[]
-			//[][][]
-			let shape[0] = 0; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 1;
-			return;
-		}
-		if (rotation = 2) {
-			//  [][]
-			//  []
-			//  []
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 2; let shape[3] = 0;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 3) {
-			//
-			//[][][]
-			//	  []
-			let shape[0] = 0; let shape[1] = 1;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 2;
-			return;
-		}
+	method void initLShape() {
+		var Array rot0, rot1, rot2, rot3;
+
+		//Rotation 0
+		//  []
+		//  []
+		//  [][]
+		let rot0 = Array.new(8);
+		let rot0[0] = 1; let rot0[1] = 0;
+		let rot0[2] = 1; let rot0[3] = 1;
+		let rot0[4] = 1; let rot0[5] = 2;
+		let rot0[6] = 2; let rot0[7] = 2;
+		let rotations[0] = rot0;
+
+		//Rotation 1
+		//[][][]
+		//[]
+		let rot1 = Array.new(8);
+		let rot1[0] = 0; let rot1[1] = 1;
+		let rot1[2] = 1; let rot1[3] = 1;
+		let rot1[4] = 2; let rot1[5] = 1;
+		let rot1[6] = 0; let rot1[7] = 2;
+		let rotations[1] = rot1;
+
+		//Rotation 2
+		//[][]
+		//  []
+		//  []
+		let rot2 = Array.new(8);
+		let rot2[0] = 0; let rot2[1] = 0;
+		let rot2[2] = 1; let rot2[3] = 0;
+		let rot2[4] = 1; let rot2[5] = 1;
+		let rot2[6] = 1; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//    []
+		//[][][]
+		let rot3 = Array.new(8);
+		let rot3[0] = 2; let rot3[1] = 0;
+		let rot3[2] = 0; let rot3[3] = 1;
+		let rot3[4] = 1; let rot3[5] = 1;
+		let rot3[6] = 2; let rot3[7] = 1;
+		let rotations[3] = rot3;
+		
 		return;
 	}
 
-	method void setLShape() {
-		if (rotation = 0) {
-			//  []
-			//  []
-			//  [][]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 2;
-			let shape[6] = 2; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 1) {
-			//[][][]
-			//[]
-			let shape[0] = 0; let shape[1] = 1;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 0; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 2) {
-			//[][]
-			//  []
-			//  []
-			let shape[0] = 0; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 0;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 3) {
-			//    []
-			//[][][]
-			let shape[0] = 2; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 1;
-			return;
-		}
-		return;
-	}
+	method void initOShape() {
+		var Array rot0;
 
-	method void setOShape() {
+		//Rotation 0
 		//  [][]
 		//  [][]
-		let shape[0] = 1; let shape[1] = 0;
-		let shape[2] = 2; let shape[3] = 0;
-		let shape[4] = 1; let shape[5] = 1;
-		let shape[6] = 2; let shape[7] = 1;
+		let rot0 = Array.new(8);
+		let rot0[0] = 1; let rot0[1] = 0;
+		let rot0[2] = 2; let rot0[3] = 0;
+		let rot0[4] = 1; let rot0[5] = 1;
+		let rot0[6] = 2; let rot0[7] = 1;
+		let rotations[0] = rot0;
+		//Rotations 1, 2, 3 are identical for O shape
+		let rotations[1] = rot0;
+		let rotations[2] = rot0;
+		let rotations[3] = rot0;
+
 		return;
 	}
 
-	method void setSShape() {
-		if (rotation = 0) {
+	method void initSShape() {
+		var Array rot0, rot1, rot2, rot3;
+		//Rotation 0
 			//	[][]
 			//[][]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 2; let shape[3] = 0;
-			let shape[4] = 0; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 1;
-			return;
-		}
-		if (rotation = 1) {
-			//[]
-			//[][]
-			//  []
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 2) {
+		let rot0 = Array.new(8);
+		let rot0[0] = 1; let rot0[1] = 0;
+		let rot0[2] = 2; let rot0[3] = 0;
+		let rot0[4] = 0; let rot0[5] = 1;
+		let rot0[6] = 1; let rot0[7] = 1;
+		let rotations[0] = rot0;
+
+		//Rotation 1
+		//[]
+		//[][]
+		//  []
+		let rot1 = Array.new(8);
+		let rot1[0] = 1; let rot1[1] = 0;
+		let rot1[2] = 1; let rot1[3] = 1;
+		let rot1[4] = 2; let rot1[5] = 1;
+		let rot1[6] = 2; let rot1[7] = 2;
+		let rotations[1] = rot1;
+
+		//Rotation 2
 			//	[][]
 			//[][]
-			let shape[0] = 1; let shape[1] = 1;
-			let shape[2] = 2; let shape[3] = 1;
-			let shape[4] = 0; let shape[5] = 2;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 3) {
-			//[]
-			//[][]
-			//  []
-			let shape[0] = 0; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
+		let rot2 = Array.new(8);
+		let rot2[0] = 1; let rot2[1] = 1;
+		let rot2[2] = 2; let rot2[3] = 1;
+		let rot2[4] = 0; let rot2[5] = 2;
+		let rot2[6] = 1; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//[]
+		//[][]
+		//  []
+		let rot3 = Array.new(8);
+		let rot3[0] = 0; let rot3[1] = 0;
+		let rot3[2] = 0; let rot3[3] = 1;
+		let rot3[4] = 1; let rot3[5] = 1;
+		let rot3[6] = 1; let rot3[7] = 2;
+		let rotations[3] = rot3;
+		
 		return;
 	}
 
-	method void setTShape() {
-		if (rotation = 0) {
-			//  []
-			//[][][]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 1;
-			return;
-		}
-		if (rotation = 1) {
-			//[]
-			//[][]
-			//[]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 2) {
-			//[][][]
-			//  []
-			let shape[0] = 0; let shape[1] = 1;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
+	method void initTShape() {
+		var Array rot0, rot1, rot2, rot3;
+		//Rotation 0
+		//  []
+		//[][][]
+		let rot0 = Array.new(8);
+		let rot0[0] = 1; let rot0[1] = 0;
+		let rot0[2] = 0; let rot0[3] = 1;
+		let rot0[4] = 1; let rot0[5] = 1;
+		let rot0[6] = 2; let rot0[7] = 1;
+		let rotations[0] = rot0;
+			
+		//Rotation 1
+		//[]
+		//[][]
+		//[]
+		let rot1 = Array.new(8);
+		let rot1[0] = 1; let rot1[1] = 0;
+		let rot1[2] = 1; let rot1[3] = 1;
+		let rot1[4] = 2; let rot1[5] = 1;
+		let rot1[6] = 1; let rot1[7] = 2;
+		let rotations[1] = rot1;
 
-		}
-		if (rotation = 3) {
-			//  []
-			//[][]
-			//  []
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
+		//Rotation 2
+		//[][][]
+		//  []
+		let rot2 = Array.new(8);
+		let rot2[0] = 0; let rot2[1] = 1;
+		let rot2[2] = 1; let rot2[3] = 1;
+		let rot2[4] = 2; let rot2[5] = 1;
+		let rot2[6] = 1; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//  []
+		//[][]
+		//  []
+		let rot3 = Array.new(8);
+		let rot3[0] = 1; let rot3[1] = 0;
+		let rot3[2] = 0; let rot3[3] = 1;
+		let rot3[4] = 1; let rot3[5] = 1;
+		let rot3[6] = 1; let rot3[7] = 2;
+		let rotations[3] = rot3;
+		
 		return;
 	}
 
-	method void setZShape() {
-		if (rotation = 0) {
-			//[][]
-			//  [][]
-			let shape[0] = 0; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 0;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 2; let shape[7] = 1;
-			return;
-		}
-		if (rotation = 1) {
-			//    []
-			//  [][]
-			//  []
-			let shape[0] = 2; let shape[1] = 0;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 2; let shape[5] = 1;
-			let shape[6] = 1; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 2) {
-			//
-			//[][]
-			//  [][]
-			let shape[0] = 0; let shape[1] = 1;
-			let shape[2] = 1; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 2;
-			let shape[6] = 2; let shape[7] = 2;
-			return;
-		}
-		if (rotation = 3) {
-			//  []
-			//[][]
-			//[]
-			let shape[0] = 1; let shape[1] = 0;
-			let shape[2] = 0; let shape[3] = 1;
-			let shape[4] = 1; let shape[5] = 1;
-			let shape[6] = 0; let shape[7] = 2;
-			return;
-		}
+	method void initZShape() {
+		var Array rot0, rot1, rot2, rot3;
+		//Rotation 0
+		//[][]
+		//  [][]
+		let rot0 = Array.new(8);
+		let rot0[0] = 0; let rot0[1] = 0;
+		let rot0[2] = 1; let rot0[3] = 0;
+		let rot0[4] = 1; let rot0[5] = 1;
+		let rot0[6] = 2; let rot0[7] = 1;
+		let rotations[0] = rot0;
+
+		//Rotation 1
+		//    []
+		//  [][]
+		//  []
+		let rot1 = Array.new(8);
+		let rot1[0] = 2; let rot1[1] = 0;
+		let rot1[2] = 1; let rot1[3] = 1;
+		let rot1[4] = 2; let rot1[5] = 1;
+		let rot1[6] = 1; let rot1[7] = 2;
+		let rotations[1] = rot1;
+
+		//Rotation 2
+		//[][]
+		//  [][]
+		let rot2 = Array.new(8);
+		let rot2[0] = 0; let rot2[1] = 1;
+		let rot2[2] = 1; let rot2[3] = 1;
+		let rot2[4] = 1; let rot2[5] = 2;
+		let rot2[6] = 2; let rot2[7] = 2;
+		let rotations[2] = rot2;
+
+		//Rotation 3
+		//  []
+		//[][]
+		//[]
+		let rot3 = Array.new(8);
+		let rot3[0] = 1; let rot3[1] = 0;
+		let rot3[2] = 0; let rot3[3] = 1;
+		let rot3[4] = 1; let rot3[5] = 1;
+		let rot3[6] = 0; let rot3[7] = 2;
+		let rotations[3] = rot3;
+
 		return;
 	}
 
@@ -364,7 +380,6 @@ class Blocks {
 		if (rotation > 3) {
 			let rotation = 0;
 		}
-		do updateShape();
 		return;
 	}
 
@@ -373,7 +388,6 @@ class Blocks {
 		if (rotation < 0) {
 			let rotation = 3;
 		}
-		do updateShape();
 		return;
 	}
 
@@ -401,11 +415,26 @@ class Blocks {
 	}
 
 	method Array getShape() {
-		return shape;
+		return rotations[rotation];
 	}
 
 	method void dispose() {
-		do shape.dispose();
+		var int i;
+		var Array rot;
+
+		if (type = O) {
+			let rot = rotations[0];
+			do rot.dispose();
+		} else {
+			let i = 0;
+			while (i < 4) {
+				let rot = rotations[i];
+				do rot.dispose();
+				let i = i + 1;
+			}
+		}
+
+		do rotations.dispose();
 		do Memory.deAlloc(this);
 		return;
 	}
