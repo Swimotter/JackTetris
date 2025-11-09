@@ -101,46 +101,48 @@ class Blocks {
 	method void initJShape() {
 		var Array rot0, rot1, rot2, rot3;
 
+		//J-Piece rotates around center cell (1,1)
+
 		//Rotation 0
-		//	[]
-		//	[]
-		//[][]
+		//[]
+		//[][][]
 		let rot0 = Array.new(8);
-		let rot0[0] = 1; let rot0[1] = 0;
-		let rot0[2] = 1; let rot0[3] = 1;
-		let rot0[4] = 0; let rot0[5] = 2;
-		let rot0[6] = 1; let rot0[7] = 2;
+		let rot0[0] = 0; let rot0[1] = 0;
+		let rot0[2] = 0; let rot0[3] = 1;
+		let rot0[4] = 1; let rot0[5] = 1;
+		let rot0[6] = 2; let rot0[7] = 1;
 		let rotations[0] = rot0;
 
 		//Rotation 1
-		//[]
-		//[][][]
-		let rot1 = Array.new(8);
-		let rot1[0] = 0; let rot1[1] = 0;
-		let rot1[2] = 0; let rot1[3] = 1;
-		let rot1[4] = 1; let rot1[5] = 1;
-		let rot1[6] = 2; let rot1[7] = 1;
-		let rotations[1] = rot1;
-
-		//Rotation 2
 		//  [][]
 		//  []
 		//  []
+		let rot1 = Array.new(8);
+		let rot1[0] = 1; let rot1[1] = 0;
+		let rot1[2] = 2; let rot1[3] = 0;
+		let rot1[4] = 1; let rot1[5] = 1;
+		let rot1[6] = 1; let rot1[7] = 2;
+		let rotations[1] = rot1;
+
+		//Rotation 2
+		//    []
+		//[][][]
 		let rot2 = Array.new(8);
-		let rot2[0] = 1; let rot2[1] = 0;
-		let rot2[2] = 2; let rot2[3] = 0;
-		let rot2[4] = 1; let rot2[5] = 1;
-		let rot2[6] = 1; let rot2[7] = 2;
+		let rot2[0] = 0; let rot2[1] = 1;
+		let rot2[2] = 1; let rot2[3] = 1;
+		let rot2[4] = 2; let rot2[5] = 1;
+		let rot2[6] = 2; let rot2[7] = 2;
 		let rotations[2] = rot2;
 
 		//Rotation 3
-		//    []
-		//[][][]
+		//	[]
+		//	[]
+		//[][]
 		let rot3 = Array.new(8);
-		let rot3[0] = 0; let rot3[1] = 1;
+		let rot3[0] = 1; let rot3[1] = 0;
 		let rot3[2] = 1; let rot3[3] = 1;
-		let rot3[4] = 2; let rot3[5] = 1;
-		let rot3[6] = 2; let rot3[7] = 2;
+		let rot3[4] = 0; let rot3[5] = 2;
+		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
 		
 		return;
@@ -149,46 +151,48 @@ class Blocks {
 	method void initLShape() {
 		var Array rot0, rot1, rot2, rot3;
 
+		//L-Piece rotates around center cell (1,1)
+
 		//Rotation 0
-		//  []
-		//  []
-		//  [][]
+		//    []
+		//[][][]
 		let rot0 = Array.new(8);
-		let rot0[0] = 1; let rot0[1] = 0;
-		let rot0[2] = 1; let rot0[3] = 1;
-		let rot0[4] = 1; let rot0[5] = 2;
-		let rot0[6] = 2; let rot0[7] = 2;
+		let rot0[0] = 2; let rot0[1] = 0;
+		let rot0[2] = 0; let rot0[3] = 1;
+		let rot0[4] = 1; let rot0[5] = 1;
+		let rot0[6] = 2; let rot0[7] = 1;
 		let rotations[0] = rot0;
 
 		//Rotation 1
-		//[][][]
-		//[]
+		//  []
+		//  []
+		//  [][]
 		let rot1 = Array.new(8);
-		let rot1[0] = 0; let rot1[1] = 1;
+		let rot1[0] = 1; let rot1[1] = 0;
 		let rot1[2] = 1; let rot1[3] = 1;
-		let rot1[4] = 2; let rot1[5] = 1;
-		let rot1[6] = 0; let rot1[7] = 2;
+		let rot1[4] = 1; let rot1[5] = 2;
+		let rot1[6] = 2; let rot1[7] = 2;
 		let rotations[1] = rot1;
 
 		//Rotation 2
-		//[][]
-		//  []
-		//  []
+		//[][][]
+		//[]
 		let rot2 = Array.new(8);
-		let rot2[0] = 0; let rot2[1] = 0;
-		let rot2[2] = 1; let rot2[3] = 0;
-		let rot2[4] = 1; let rot2[5] = 1;
-		let rot2[6] = 1; let rot2[7] = 2;
+		let rot2[0] = 0; let rot2[1] = 1;
+		let rot2[2] = 1; let rot2[3] = 1;
+		let rot2[4] = 2; let rot2[5] = 1;
+		let rot2[6] = 0; let rot2[7] = 2;
 		let rotations[2] = rot2;
 
 		//Rotation 3
-		//    []
-		//[][][]
+		//[][]
+		//  []
+		//  []
 		let rot3 = Array.new(8);
-		let rot3[0] = 2; let rot3[1] = 0;
-		let rot3[2] = 0; let rot3[3] = 1;
+		let rot3[0] = 0; let rot3[1] = 0;
+		let rot3[2] = 1; let rot3[3] = 0;
 		let rot3[4] = 1; let rot3[5] = 1;
-		let rot3[6] = 2; let rot3[7] = 1;
+		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
 		
 		return;
@@ -196,6 +200,8 @@ class Blocks {
 
 	method void initOShape() {
 		var Array rot0;
+
+		//O-Piece has only one rotation
 
 		//Rotation 0
 		//  [][]
@@ -206,7 +212,6 @@ class Blocks {
 		let rot0[4] = 1; let rot0[5] = 1;
 		let rot0[6] = 2; let rot0[7] = 1;
 		let rotations[0] = rot0;
-		//Rotations 1, 2, 3 are identical for O shape
 		let rotations[1] = rot0;
 		let rotations[2] = rot0;
 		let rotations[3] = rot0;
@@ -216,9 +221,10 @@ class Blocks {
 
 	method void initSShape() {
 		var Array rot0, rot1, rot2, rot3;
+
 		//Rotation 0
-			//	[][]
-			//[][]
+		//	[][]
+		//[][]
 		let rot0 = Array.new(8);
 		let rot0[0] = 1; let rot0[1] = 0;
 		let rot0[2] = 2; let rot0[3] = 0;
@@ -263,6 +269,9 @@ class Blocks {
 
 	method void initTShape() {
 		var Array rot0, rot1, rot2, rot3;
+
+		//T-Piece rotates around center cell (1,1)
+
 		//Rotation 0
 		//  []
 		//[][][]
@@ -310,6 +319,9 @@ class Blocks {
 
 	method void initZShape() {
 		var Array rot0, rot1, rot2, rot3;
+
+		//Z-Piece rotates around center cell (1,1)
+
 		//Rotation 0
 		//[][]
 		//  [][]
