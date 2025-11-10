@@ -133,6 +133,7 @@ class Game {
 		do score.reset();
 
 		do Draw.drawGridBorder(grid);
+		do Draw.drawGridLines(grid);
 
 		let nextBlock = Blocks.new(bag.getNextBlock());
 

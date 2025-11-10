@@ -35,8 +35,8 @@ class Draw {
 		//outer border
 		do Screen.setColor(true);
 		do Screen.drawRectangle(
-			offsetX - 2,
-			offsetY - 2,
+			offsetX - 1,
+			offsetY - 1,
 			offsetX + (cellSize * width) + 1,
 			offsetY + (cellSize * height) + 1
 		);
@@ -44,11 +44,38 @@ class Draw {
 		//inner border
 		do Screen.setColor(false);
 		do Screen.drawRectangle(
-			offsetX - 1,
-			offsetY - 1,
-			offsetX + (cellSize * width),
-			offsetY + (cellSize * height)
+			offsetX + 1,
+			offsetY + 1,
+			offsetX + (cellSize * width) - 1,
+			offsetY + (cellSize * height) -1
 		);
+		return;
+	}
+
+	function void drawGridLines(Grid grid) {
+		var int cellSize, offsetX, offsetY, width, height;
+		var int row, col;
+
+		let row = 1;
+		let col = 1;
+
+		let cellSize = Grid.getCellSize();
+		let offsetX = Grid.getOffsetX();
+		let offsetY = Grid.getOffsetY();
+		let width = grid.getWidth();
+		let height = grid.getHeight();
+
+		while (col < width) {
+			do Screen.setColor(true);
+			do Screen.drawRectangle(offsetX + (cellSize * col), offsetY - 1, offsetX + (cellSize * col), offsetY + (cellSize * height) + 1);
+			let col = col + 1;
+		}
+
+		while (row < height) {
+			do Screen.setColor(true);
+			do Screen.drawRectangle(offsetX - 1, offsetY + (cellSize * row), offsetX + (cellSize * width), offsetY + (cellSize * row));
+			let row = row + 1;
+		}
 		return;
 	}
 
@@ -67,7 +94,7 @@ class Draw {
 		let y2 = y1 + cellSize - 1;
 
 		do Screen.setColor(filled);
-		do Screen.drawRectangle(x1, y1, x2, y2);
+		do Screen.drawRectangle(x1 + 1, y1 + 1, x2, y2);
 		return;
 	}
 
@@ -107,6 +134,7 @@ class Draw {
 	//draw entire grid
 	function void drawGrid(Grid grid) {
 		do Draw.drawGridBorder(grid);
+		do Draw.drawGridLines(grid);
 		do Draw.drawGridRows(grid, 0, (grid.getHeight() - 1));
 		return;
 	}
@@ -136,7 +164,7 @@ class Draw {
 				let x2 = x1 + cellSize - 1;
 				let y2 = y1 + cellSize - 1;
 
-				do Screen.drawRectangle(x1, y1, x2, y2);
+				do Screen.drawRectangle(x1 + 1, y1 + 1, x2, y2);
 			}
 			let i = i + 2;
 		}
