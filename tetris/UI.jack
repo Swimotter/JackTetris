@@ -111,9 +111,13 @@ class UI {
 		return;
 	}
 
-	function void drawScore(int score) {
+	function void drawScore(BigInt score) {
+		//clear score area
+		do Screen.setColor(false);
+		do Screen.drawRectangle(42,24,180,32);
+
 		do Output.moveCursor(4, 7);
-		do Output.printInt(score);
+		do score.print();
 		return;
 	}
 
@@ -132,10 +136,15 @@ class UI {
 
 	//draw all static ui elements
 	function void drawAll() {
+		var BigInt zeroScore;
 		do UI.drawHoldBox();
 		do UI.drawNextBox();
 		do UI.drawScoreText();
-		do UI.drawScore(0);
+
+		//create temp BigInt with value 0
+		let zeroScore = BigInt.new();
+		do UI.drawScore(zeroScore);
+		do zeroScore.dispose();
 		return;
 	}
 }

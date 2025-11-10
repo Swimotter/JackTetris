@@ -14,11 +14,11 @@ class Score {
 	* - Tetris: 800 * level
 	**/
 
-	field int score;
+	field BigInt score;
 	field int combo;
 
 	constructor Score new() {
-		let score = 0;
+		let score = BigInt.new();
 		let combo = 0;
 		return this;
 	}
@@ -33,44 +33,47 @@ class Score {
 		}
 
 		//base points based on lines cleared
-		let points = addClearScore(lines, level);
+		let points = getClearScore(lines, level);
 
 		//combo bonus (50 points per combo * level)
 		let comboBonus = combo * 50 * level;
 		let points = points + comboBonus;
 
-		let score = score + points;
+		do score.add(points);
 		let combo = combo + 1;
 
 		//level up every 10 lines
 		return;
 	}
 
-	method int addClearScore(int lines, int level) {
+	method int getClearScore(int lines, int level) {
+		var int multiplier;
+		let multiplier = level + 1; //level 0 = 1x
+
 		if (lines = 1) {
-			return 100 * level;
+			return 100 * multiplier;
 		}
 		if (lines = 2) {
-			return 300 * level;
+			return 300 * multiplier;
 		}
 		if (lines = 3) {
-			return 500 * level;
+			return 500 * multiplier;
 		}
 		if (lines = 4) {
-			return 800 * level;
+			return 800 * multiplier;
 		} //Tetris!
 		return 0;
 	}
 
 	//soft drop points (1 point per cell)
 	method void addSoftDropScore(int cells) {
-		let score = score + cells;
+		do score.add(cells);
 		return;
 	}
 
 	//hard drop points (2 points per cell)
 	method void addHardDropScore(int cells) {
-		let score = score + (cells * 2);
+		do score.add(cells * 2);
 		return;
 	}
 
@@ -81,12 +84,12 @@ class Score {
 
 	method void reset() {
 		do resetCombo();
-		let score = 0;
+		do score.reset();
 		return;
 	}
 
 	//getters
-	method int getScore() {
+	method BigInt getScore() {
 		return score;
 	}
 
@@ -95,6 +98,7 @@ class Score {
 	}
 
 	method void dispose() {
+		do score.dispose();
 		do Memory.deAlloc(this);
 		return;
 	}
