@@ -1,0 +1,116 @@
+class BigInt {
+    /**
+    *Multi-digit integer system for numbers that exceed 32,767
+    *Stores number as array of digits (base 10)
+    *Supports addition and display 
+    **/
+
+    field Array digits;
+    field int numDigits;
+    field int capacity;
+
+    constructor BigInt new() {
+        let capacity = 10;
+        let digits = Array.new(capacity);
+        let numDigits = 1;
+        let digits[0] = 0;
+        return this;
+    }
+
+    method void add(int value) {
+        var int carry, i, sum;
+        var int digitValue;
+
+        if (value < 0) {
+            return;
+        } //dont handle negative numbers
+
+        let carry = value;
+        let i = 0;
+
+        //add value digit by digit
+        while ((carry > 0) | (i < numDigits)) {
+            if (i < numDigits) {
+                let sum = digits[i] + (carry - ((carry / 10) * 10)); //carry % 10
+            } else {
+                let sum = carry - ((carry / 10) * 10);
+            }
+
+            let carry = carry / 10;
+
+            //handle carry from this digit
+            if (sum > 9) {
+                let digits[i] = sum - 10;
+                let carry = carry + 1;
+            } else {
+                let digits[i] = sum;
+            }
+
+            let i = i + 1;
+
+            //expand if needed
+            if ((i > numDigits) & (i < capacity)) {
+                let numDigits = i;
+            }
+
+            if (i > (capacity - 1)) {
+                return; //hit capacity limit
+            }
+        }
+        return;
+    }
+
+    //print number at current cursor position
+    method void print() {
+        var int i;
+        var boolean leadingZero;
+
+        let leadingZero = true;
+        let i = numDigits - 1;
+
+        //print from MS to LS
+        while (i > -1) {
+            //skip leading zeros except for last digit
+            if ((digits[i] > 0) | (i = 0)) {
+                let leadingZero = false;
+            }
+
+            if (~leadingZero) {
+                do Output.printInt(digits[i]);
+            }
+
+            let i = i - 1;
+        }
+        return;
+    }
+
+    //reset to zeros
+    method void reset() {
+        var int i;
+        let i = 0;
+        while (i < capacity) {
+            let digits[i] = 0;
+            let i = i + 1;
+        }
+        let numDigits = 1;
+        return;
+    }
+
+    //get a specific digit
+    method int getDigit(int index) {
+        if ((index < 0) | (index > (numDigits - 1))) {
+            return 0;
+        }
+        return digits[index];
+    }
+
+    method int getNumDigits() {
+        return numDigits;
+    }
+
+    method void dispose() {
+        do digits.dispose();
+        do Memory.deAlloc(this);
+        return;
+    }
+}
