@@ -387,25 +387,14 @@ class Blocks {
 		return;
 	}
 
-	method void rotate() {
-		let rotation = rotation + 1;
-		if (rotation > 3) {
-			let rotation = 0;
-		}
-		return;
-	}
-
-	method void unrotate() {
-		let rotation = rotation - 1;
-		if (rotation < 0) {
-			let rotation = 3;
-		}
-		return;
-	}
-
 	method void setPosition(int newX, int newY) {
 		let x = newX;
 		let y = newY;
+		return;
+	}
+
+	method void setRotation(int newRotation) {
+		let rotation = newRotation;
 		return;
 	}
 
