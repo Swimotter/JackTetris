@@ -130,7 +130,7 @@ class Game {
 
 		do grid.clear();
 		do hold.reset();
-		//do score.reset();
+		do score.reset();
 
 		do Draw.drawGridBorder(grid);
 
