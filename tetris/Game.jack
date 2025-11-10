@@ -202,65 +202,65 @@ class Game {
 		return;
 	}
 
-	method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotation, boolean firstPress) {
-		if (doBlockMovement) {
-			if (input = inputLeft) {
-				if (grid.canMoveTo(curBlock, curBlock.getX() - 1, curBlock.getY())) {
-					do Draw.drawBlock(curBlock, grid, false);
-					do curBlock.moveLeft();
-					do Draw.drawBlock(curBlock, grid, true);
-				}
-				return;
-			}
-			if (input = inputRight) {
-				if (grid.canMoveTo(curBlock, curBlock.getX() + 1, curBlock.getY())) {
-					do Draw.drawBlock(curBlock, grid, false);
-					do curBlock.moveRight();
-					do Draw.drawBlock(curBlock, grid, true);
-				}
-				return;
-			}
-		}
-		if (doBlockRotation) {
-			if (input = inputRotateCW) {
+method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotation, boolean firstPress) {
+	if (doBlockMovement) {
+		if (input = inputLeft) {
+			if (grid.canMoveTo(curBlock, curBlock.getX() - 1, curBlock.getY())) {
 				do Draw.drawBlock(curBlock, grid, false);
-				do curBlock.rotate();
-				if (~grid.canPlaceBlock(curBlock)) {
-					do curBlock.unrotate();
-				}
-				do Draw.drawGrid(grid);
+				do curBlock.moveLeft();
 				do Draw.drawBlock(curBlock, grid, true);
-				return;
 			}
-			if (input = inputRotateCCW) {
-				do Draw.drawBlock(curBlock, grid, false);
-				do curBlock.unrotate();
-				if (~grid.canPlaceBlock(curBlock)) {
-					do curBlock.rotate();
-				}
-				do Draw.drawGrid(grid);
-				do Draw.drawBlock(curBlock, grid, true);
-				return;
-			}
-		}
-		if (input = inputSoftDrop) {
-			// Force at least one down
-			let gravityOveride = 3;
 			return;
 		}
-		if (firstPress) {
-			if (input = inputHardDrop) {
+		if (input = inputRight) {
+			if (grid.canMoveTo(curBlock, curBlock.getX() + 1, curBlock.getY())) {
 				do Draw.drawBlock(curBlock, grid, false);
-				while (grid.canMoveTo(curBlock, curBlock.getX(), curBlock.getY() + 1)) {
-					do curBlock.moveDown();
-				}
-				do placeBlock();
-
-				return;
+				do curBlock.moveRight();
+				do Draw.drawBlock(curBlock, grid, true);
 			}
+			return;
 		}
+	}
+	if (doBlockRotation) {
+		if (input = inputRotateCW) {
+			do Draw.drawBlock(curBlock, grid, false);
+			// Grid handles SRS rotation with wall kicks
+			if (~grid.tryRotateBlockCW(curBlock)) {
+				// Rotation failed, no change needed
+			}
+			do Draw.drawGrid(grid);
+			do Draw.drawBlock(curBlock, grid, true);
+			return;
+		}
+		if (input = inputRotateCCW) {
+			do Draw.drawBlock(curBlock, grid, false);
+			// Grid handles SRS rotation with wall kicks
+			if (~grid.tryRotateBlockCCW(curBlock)) {
+				// Rotation failed, no change needed
+			}
+			do Draw.drawGrid(grid);
+			do Draw.drawBlock(curBlock, grid, true);
+			return;
+		}
+	}
+	if (input = inputSoftDrop) {
+		// Force at least one down
+		let gravityOveride = 3;
 		return;
 	}
+	if (firstPress) {
+		if (input = inputHardDrop) {
+			do Draw.drawBlock(curBlock, grid, false);
+			while (grid.canMoveTo(curBlock, curBlock.getX(), curBlock.getY() + 1)) {
+				do curBlock.moveDown();
+			}
+			do placeBlock();
+
+			return;
+		}
+	}
+	return;
+}
 
 	method void updateBlock() {
 		var int blockTime;
