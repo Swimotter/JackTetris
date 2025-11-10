@@ -36,6 +36,7 @@ class Hold {
 		//swap held and current pieces
 		let temp = heldBlock;
 		let heldBlock = currentBlock;
+		do heldBlock.setRotation(0);
 		let canSwap = false;
 
 		do temp.setPosition(3, 0); //reset position
