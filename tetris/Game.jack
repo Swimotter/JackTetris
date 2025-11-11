@@ -33,6 +33,8 @@ class Game {
 	field int lastInputTime;
 	field int lastInput;
 
+	field int softDropDistance;
+
 	function void init() {
 		let frameRate = 60;
 		// frameRate / 2
@@ -126,7 +128,6 @@ class Game {
 
 	method void reset() {
 		do Draw.clearScreen();
-		do UI.drawAll();
 
 		do grid.clear();
 		do hold.reset();
@@ -141,7 +142,10 @@ class Game {
 		let linesUntilNextLevel = 10;
 		let waitingForBlock = true;
 		let lockTime = 0;
+		let softDropDistance = 0;
 		let finished = false;
+		do UI.drawLevel(level);
+		do UI.drawAll();
 		return;
 	}
 
@@ -156,6 +160,7 @@ class Game {
 
 		let input = Game.getInput();
 		if ((input = inputHold) & (hold.canHold())) {
+			let softDropDistance = 0;
 			do Draw.drawBlock(curBlock, grid, false);
 			let curBlock = hold.holdPiece(curBlock);
 			do UI.drawHoldPiece(hold.getHeldBlock());
@@ -165,6 +170,7 @@ class Game {
 			else {
 				do Draw.drawBlock(curBlock, grid, true);
 			}
+			do UI.drawScore(score.getScore());
 		}
 		else {
 			let gravityOveride = gravity[0];
@@ -195,6 +201,7 @@ class Game {
 		let nextBlock = Blocks.new(bag.getNextBlock());
 		let fallTime = time;
 		let waitingForBlock = false;
+		let softDropDistance = 0;
 
 		// Check if we spawned inside a block -> game over
 		if (~grid.canPlaceBlock(curBlock)) {
@@ -205,6 +212,7 @@ class Game {
 	}
 
 method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotation, boolean firstPress) {
+	var int hardDropDistance;
 	if (doBlockMovement) {
 		if (input = inputLeft) {
 			if (grid.canMoveTo(curBlock, curBlock.getX() - 1, curBlock.getY())) {
@@ -252,10 +260,17 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 	}
 	if (firstPress) {
 		if (input = inputHardDrop) {
+			let hardDropDistance = 0;
 			do Draw.drawBlock(curBlock, grid, false);
 			while (grid.canMoveTo(curBlock, curBlock.getX(), curBlock.getY() + 1)) {
 				do curBlock.moveDown();
+				let hardDropDistance = hardDropDistance + 1;
 			}
+
+			// Add hard drop score
+			do score.addHardDropScore(hardDropDistance);
+			do UI.drawScore(score.getScore());
+
 			do placeBlock();
 
 			return;
@@ -287,6 +302,12 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 				do Draw.drawBlock(curBlock, grid, false);
 				do curBlock.moveDown();
 				do Draw.drawBlock(curBlock, grid, true);
+
+				if (gravityOveride = 3) {
+					let softDropDistance = softDropDistance + 1;
+					do score.addSoftDropScore(1);
+					do UI.drawScore(score.getScore());
+				}
 			}
 		}
 		// On ground
@@ -294,6 +315,7 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 			let lockTime = lockTime + 1;
 
 			if ((lockTime > lockDelay) | (lockTime = lockDelay)) {
+				let softDropDistance = 0;
 				do placeBlock();
 				return;
 			}
@@ -309,12 +331,14 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 		do Draw.drawPlacedBlock(curBlock, grid);
 		let waitingForBlock = true;
 		let lockTime = 0;
+		let softDropDistance = 0;
 		do hold.enableSwap();
 		let linesCleared = grid.clearLines();
 		do Draw.drawGrid(grid);
 		do score.addLineScore(linesCleared, level);
 		do updateLevel(linesCleared);
-		do UI.drawScore(score.getScore());  // This now passes BigInt instead of int
+		do UI.drawCombo(score.getCombo());
+		do UI.drawScore(score.getScore());
 		do curBlock.dispose();
 		return;
 	}
@@ -325,6 +349,7 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 			// Store roll-over lines
 			let linesUntilNextLevel = 10 + linesUntilNextLevel;
 			let level = level + 1;
+			do UI.drawLevel(level);
 		}
 		return;
 	}

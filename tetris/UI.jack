@@ -30,6 +30,18 @@ class UI {
 		return;
 	}
 
+	function void drawLevelText() {
+		do Output.moveCursor(6, 1);
+		do Output.printString("LEVEL: ");
+		return;
+	}
+
+	function void drawComboText() {
+		do Output.moveCursor(8, 1);
+		do Output.printString("COMBO: ");
+		return;
+	}
+
 	//draw hold box with piece preview
 	function void drawHoldBox() {
 		//draw hold box border
@@ -121,6 +133,33 @@ class UI {
 		return;
 	}
 
+	function void drawLevel(int level) {
+		//clear level area
+		do Screen.setColor(false);
+		do Screen.drawRectangle(42, 40, 180, 48);
+
+		do Output.moveCursor(6, 7);
+		do Output.printInt(level);
+		return;
+	}
+
+	function void drawCombo(int combo) {
+		//clear combo area
+		do Screen.setColor(false);
+		do Screen.drawRectangle(42, 56, 180, 64);
+
+		do Output.moveCursor(8, 7);
+		if (combo > 0) {
+			do Output.printInt(combo);
+			do Output.printString("x");
+		} else {
+			do Output.printString("  ");
+			do Output.moveCursor(8, 7);
+			do Output.printString("-");
+		}
+		return;
+	}
+
 	//clear ui regions
 	function void clearHoldArea() {
 		do Screen.setColor(false);
@@ -140,6 +179,8 @@ class UI {
 		do UI.drawHoldBox();
 		do UI.drawNextBox();
 		do UI.drawScoreText();
+		do UI.drawLevelText();
+		do UI.drawComboText();
 
 		//create temp BigInt with value 0
 		let zeroScore = BigInt.new();
