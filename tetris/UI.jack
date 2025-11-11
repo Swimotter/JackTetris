@@ -71,12 +71,11 @@ class UI {
 	}
 
 	function void drawHoldPiece(Blocks heldBlock) {
-		var int oldX, oldY;
-
+		//clear hold area
 		do Screen.setColor(false);
 		do Screen.drawRectangle(holdBoxX + 2, holdBoxY + 2, holdBoxX + holdBoxSize - 2, holdBoxY + holdBoxSize - 2);
 
-		// NOTE: This should never be null
+		//only draw if there is a held piece
 		if (~(heldBlock = null)) {
 			do UI.drawPreviewPiece(heldBlock, holdBoxX + 10, holdBoxY + 20, 8);
 		}
@@ -84,12 +83,11 @@ class UI {
 	}
 
 	function void drawNextPiece(Blocks nextBlock) {
-		var int oldX, oldY;
-
+		//clear next piece area
 		do Screen.setColor(false);
 		do Screen.drawRectangle(nextBoxX + 2, nextBoxY + 2, nextBoxX + nextBoxSize - 2, nextBoxY + nextBoxSize - 2);
 
-		// NOTE: This should never be null
+		//only draw if there is a next piece
 		if (~(nextBlock = null)) {
 			do UI.drawPreviewPiece(nextBlock, nextBoxX + 10, nextBoxY + 20, 8);
 		}
@@ -176,13 +174,14 @@ class UI {
 	//draw all static ui elements
 	function void drawAll() {
 		var BigInt zeroScore;
+
 		do UI.drawHoldBox();
 		do UI.drawNextBox();
 		do UI.drawScoreText();
 		do UI.drawLevelText();
 		do UI.drawComboText();
 
-		//create temp BigInt with value 0
+		//create temp BigInt with value 0 and dispose after use
 		let zeroScore = BigInt.new();
 		do UI.drawScore(zeroScore);
 		do zeroScore.dispose();
