@@ -13,6 +13,8 @@ class Main {
 
 		do Game.init();
 
+		let game = null;
+
 		while (playing) {
 			do Screen.clearScreen();
 			do Output.moveCursor(10, 18);
@@ -23,12 +25,15 @@ class Main {
 				let c = Keyboard.keyPressed();
 				let seed = seed + 1000;
 			}
-			if ((c = 128) & (game = null)) {
-				let game = Game.new(seed);
-			}
 
 			if (c = 128) {
-				do game.reset();
+				if (game = null) {
+					let game = Game.new(seed);
+				} else {
+					do game.reset();
+				}
+
+				// Game loop
 				while (~Game.isFinished()) {
 					do game.tick();
 					do Sys.wait(frameTime);
