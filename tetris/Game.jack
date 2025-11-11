@@ -121,12 +121,24 @@ class Game {
 		let hold = Hold.new();
 		let score = Score.new();
 
+		let curBlock = null;
+		let nextBlock = null;
+
 		do reset();
 
 		return this;
 	}
 
 	method void reset() {
+		//clean up existing blocks before creating new ones
+		if (~(curBlock = null)) {
+			do curBlock.dispose();
+			let curBlock = null;
+		}
+		if (~(nextBlock = null)) {
+			do nextBlock.dispose();
+		}
+
 		do Draw.clearScreen();
 
 		do grid.clear();
@@ -143,7 +155,11 @@ class Game {
 		let waitingForBlock = true;
 		let lockTime = 0;
 		let softDropDistance = 0;
+		let time = 0;
+		let lastInput = 0;
+		let lastInputTime = 0;
 		let finished = false;
+
 		do UI.drawLevel(level);
 		do UI.drawAll();
 		return;
@@ -329,6 +345,11 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 
 		do grid.placeBlock(curBlock);
 		do Draw.drawPlacedBlock(curBlock, grid);
+
+		//dispose of current block after placing int
+		do curBlock.dispose();
+		let curBlock = null;
+
 		let waitingForBlock = true;
 		let lockTime = 0;
 		let softDropDistance = 0;
@@ -339,7 +360,6 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 		do updateLevel(linesCleared);
 		do UI.drawCombo(score.getCombo());
 		do UI.drawScore(score.getScore());
-		do curBlock.dispose();
 		return;
 	}
 
