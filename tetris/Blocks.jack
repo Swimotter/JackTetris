@@ -94,7 +94,7 @@ class Blocks {
 		let rot3[4] = 1; let rot3[5] = 2;
 		let rot3[6] = 1; let rot3[7] = 3;
 		let rotations[3] = rot3;
-
+		
 		return;
 	}
 
@@ -144,7 +144,7 @@ class Blocks {
 		let rot3[4] = 0; let rot3[5] = 2;
 		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
-
+		
 		return;
 	}
 
@@ -194,7 +194,7 @@ class Blocks {
 		let rot3[4] = 1; let rot3[5] = 1;
 		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
-
+		
 		return;
 	}
 
@@ -263,7 +263,7 @@ class Blocks {
 		let rot3[4] = 1; let rot3[5] = 1;
 		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
-
+		
 		return;
 	}
 
@@ -281,7 +281,7 @@ class Blocks {
 		let rot0[4] = 1; let rot0[5] = 1;
 		let rot0[6] = 2; let rot0[7] = 1;
 		let rotations[0] = rot0;
-
+			
 		//Rotation 1
 		//[]
 		//[][]
@@ -313,7 +313,7 @@ class Blocks {
 		let rot3[4] = 1; let rot3[5] = 1;
 		let rot3[6] = 1; let rot3[7] = 2;
 		let rotations[3] = rot3;
-
+		
 		return;
 	}
 
@@ -423,12 +423,16 @@ class Blocks {
 		var int i;
 		var Array rot;
 
-
-		let i = 0;
-		while (i < 4) {
-			let rot = rotations[i];
+		if (type = O) {
+			let rot = rotations[0];
 			do rot.dispose();
-			let i = i + 1;
+		} else {
+			let i = 0;
+			while (i < 4) {
+				let rot = rotations[i];
+				do rot.dispose();
+				let i = i + 1;
+			}
 		}
 
 		do rotations.dispose();
