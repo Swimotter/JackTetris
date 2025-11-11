@@ -381,164 +381,196 @@ class Grid {
 
 	method void dispose() {
 		do board.dispose();
+		do disposeKickTables();
 		do Memory.deAlloc(this);
 		return;
 	}
 
 	function void initKickTables() {
-		var Array rotation0to1, rotation1to0, rotation1to2, rotation2to1;
-		var Array rotation2to3, rotation3to2, rotation3to0, rotation0to3;
+		// Separate variables for JLSTZ kick table (8 rotations)
+		var Array jlstz_0to1, jlstz_1to0, jlstz_1to2, jlstz_2to1;
+		var Array jlstz_2to3, jlstz_3to2, jlstz_3to0, jlstz_0to3;
+		
+		// Separate variables for I kick table (8 rotations)
+		var Array i_0to1, i_1to0, i_1to2, i_2to1;
+		var Array i_2to3, i_3to2, i_3to0, i_0to3;
 
 		//init JLSTZ kick table (4 rotations * 2 directions = 8 arrays)
 		//each array contains 5 kick attempts (x,y pairs = 10 ints)
 		let kickTableJLSTZ = Array.new(8);
 
 		//0->R (0->1): Test offsets
-		let rotation0to1 = Array.new(10);
-		let rotation0to1[0] = 0; let rotation0to1[1] = 0;
-		let rotation0to1[2] = -1; let rotation0to1[3] = 0;
-		let rotation0to1[4] = -1; let rotation0to1[5] = 1;
-		let rotation0to1[6] = 0; let rotation0to1[7] = -2;
-		let rotation0to1[8] = -1; let rotation0to1[9] = -2;
-		let kickTableJLSTZ[0] = rotation0to1;
+		let jlstz_0to1 = Array.new(10);
+		let jlstz_0to1[0] = 0; let jlstz_0to1[1] = 0;
+		let jlstz_0to1[2] = -1; let jlstz_0to1[3] = 0;
+		let jlstz_0to1[4] = -1; let jlstz_0to1[5] = 1;
+		let jlstz_0to1[6] = 0; let jlstz_0to1[7] = -2;
+		let jlstz_0to1[8] = -1; let jlstz_0to1[9] = -2;
+		let kickTableJLSTZ[0] = jlstz_0to1;
 
 		//R->0 (1->0): Reverse 0->1
-		let rotation1to0 = Array.new(10);
-		let rotation1to0[0] = 0; let rotation1to0[1] = 0;
-		let rotation1to0[2] = 1; let rotation1to0[3] = 0;
-		let rotation1to0[4] = 1; let rotation1to0[5] = -1;
-		let rotation1to0[6] = 0; let rotation1to0[7] = 2;
-		let rotation1to0[8] = 1; let rotation1to0[9] = 2;
-		let kickTableJLSTZ[1] = rotation1to0;
+		let jlstz_1to0 = Array.new(10);
+		let jlstz_1to0[0] = 0; let jlstz_1to0[1] = 0;
+		let jlstz_1to0[2] = 1; let jlstz_1to0[3] = 0;
+		let jlstz_1to0[4] = 1; let jlstz_1to0[5] = -1;
+		let jlstz_1to0[6] = 0; let jlstz_1to0[7] = 2;
+		let jlstz_1to0[8] = 1; let jlstz_1to0[9] = 2;
+		let kickTableJLSTZ[1] = jlstz_1to0;
 
 		//R->2 (1->2): Test offsets
-		let rotation1to2 = Array.new(10);
-		let rotation1to2[0] = 0; let rotation1to2[1] = 0;
-		let rotation1to2[2] = 1; let rotation1to2[3] = 0;
-		let rotation1to2[4] = 1; let rotation1to2[5] = -1;
-		let rotation1to2[6] = 0; let rotation1to2[7] = 2;
-		let rotation1to2[8] = 1; let rotation1to2[9] = 2;
-		let kickTableJLSTZ[2] = rotation1to2;
+		let jlstz_1to2 = Array.new(10);
+		let jlstz_1to2[0] = 0; let jlstz_1to2[1] = 0;
+		let jlstz_1to2[2] = 1; let jlstz_1to2[3] = 0;
+		let jlstz_1to2[4] = 1; let jlstz_1to2[5] = -1;
+		let jlstz_1to2[6] = 0; let jlstz_1to2[7] = 2;
+		let jlstz_1to2[8] = 1; let jlstz_1to2[9] = 2;
+		let kickTableJLSTZ[2] = jlstz_1to2;
 
 		//2->R (2->1): Reverse of 1->2
-		let rotation2to1 = Array.new(10);
-		let rotation2to1[0] = 0; let rotation2to1[1] = 0;
-		let rotation2to1[2] = -1; let rotation2to1[3] = 0;
-		let rotation2to1[4] = -1; let rotation2to1[5] = 1;
-		let rotation2to1[6] = 0; let rotation2to1[7] = -2;
-		let rotation2to1[8] = -1; let rotation2to1[9] = -2;
-		let kickTableJLSTZ[3] = rotation2to1;
+		let jlstz_2to1 = Array.new(10);
+		let jlstz_2to1[0] = 0; let jlstz_2to1[1] = 0;
+		let jlstz_2to1[2] = -1; let jlstz_2to1[3] = 0;
+		let jlstz_2to1[4] = -1; let jlstz_2to1[5] = 1;
+		let jlstz_2to1[6] = 0; let jlstz_2to1[7] = -2;
+		let jlstz_2to1[8] = -1; let jlstz_2to1[9] = -2;
+		let kickTableJLSTZ[3] = jlstz_2to1;
 
 		//2->L (2->3): Test offsets
-		let rotation2to3 = Array.new(10);
-		let rotation2to3[0] = 0; let rotation2to3[1] = 0;
-		let rotation2to3[2] = 1; let rotation2to3[3] = 0;
-		let rotation2to3[4] = 1; let rotation2to3[5] = 1;
-		let rotation2to3[6] = 0; let rotation2to3[7] = -2;
-		let rotation2to3[8] = 1; let rotation2to3[9] = -2;
-		let kickTableJLSTZ[4] = rotation2to3;
+		let jlstz_2to3 = Array.new(10);
+		let jlstz_2to3[0] = 0; let jlstz_2to3[1] = 0;
+		let jlstz_2to3[2] = 1; let jlstz_2to3[3] = 0;
+		let jlstz_2to3[4] = 1; let jlstz_2to3[5] = 1;
+		let jlstz_2to3[6] = 0; let jlstz_2to3[7] = -2;
+		let jlstz_2to3[8] = 1; let jlstz_2to3[9] = -2;
+		let kickTableJLSTZ[4] = jlstz_2to3;
 
 		//L->2 (3->2): Reverse of 2->3
-		let rotation3to2 = Array.new(10);
-		let rotation3to2[0] = 0; let rotation3to2[1] = 0;
-		let rotation3to2[2] = -1; let rotation3to2[3] = 0;
-		let rotation3to2[4] = -1; let rotation3to2[5] = -1;
-		let rotation3to2[6] = 0; let rotation3to2[7] = 2;
-		let rotation3to2[8] = -1; let rotation3to2[9] = 2;
-		let kickTableJLSTZ[5] = rotation3to2;
+		let jlstz_3to2 = Array.new(10);
+		let jlstz_3to2[0] = 0; let jlstz_3to2[1] = 0;
+		let jlstz_3to2[2] = -1; let jlstz_3to2[3] = 0;
+		let jlstz_3to2[4] = -1; let jlstz_3to2[5] = -1;
+		let jlstz_3to2[6] = 0; let jlstz_3to2[7] = 2;
+		let jlstz_3to2[8] = -1; let jlstz_3to2[9] = 2;
+		let kickTableJLSTZ[5] = jlstz_3to2;
 
 		//L->0 (3->0): Test offsets
-		let rotation3to0 = Array.new(10);
-		let rotation3to0[0] = 0; let rotation3to0[1] = 0;
-		let rotation3to0[2] = -1; let rotation3to0[3] = 0;
-		let rotation3to0[4] = -1; let rotation3to0[5] = -1;
-		let rotation3to0[6] = 0; let rotation3to0[7] = 2;
-		let rotation3to0[8] = -1; let rotation3to0[9] = 2;
-		let kickTableJLSTZ[6] = rotation3to0;
+		let jlstz_3to0 = Array.new(10);
+		let jlstz_3to0[0] = 0; let jlstz_3to0[1] = 0;
+		let jlstz_3to0[2] = -1; let jlstz_3to0[3] = 0;
+		let jlstz_3to0[4] = -1; let jlstz_3to0[5] = -1;
+		let jlstz_3to0[6] = 0; let jlstz_3to0[7] = 2;
+		let jlstz_3to0[8] = -1; let jlstz_3to0[9] = 2;
+		let kickTableJLSTZ[6] = jlstz_3to0;
 
 		//0->L (0->3): Reverse of 3->0
-		let rotation0to3 = Array.new(10);
-		let rotation0to3[0] = 0; let rotation0to3[1] = 0;
-		let rotation0to3[2] = 1; let rotation0to3[3] = 0;
-		let rotation0to3[4] = 1; let rotation0to3[5] = 1;
-		let rotation0to3[6] = 0; let rotation0to3[7] = -2;
-		let rotation0to3[8] = 1; let rotation0to3[9] = -2;
-		let kickTableJLSTZ[7] = rotation0to3;
+		let jlstz_0to3 = Array.new(10);
+		let jlstz_0to3[0] = 0; let jlstz_0to3[1] = 0;
+		let jlstz_0to3[2] = 1; let jlstz_0to3[3] = 0;
+		let jlstz_0to3[4] = 1; let jlstz_0to3[5] = 1;
+		let jlstz_0to3[6] = 0; let jlstz_0to3[7] = -2;
+		let jlstz_0to3[8] = 1; let jlstz_0to3[9] = -2;
+		let kickTableJLSTZ[7] = jlstz_0to3;
 
 		let kickTableI = Array.new(8);
 
 		//0->R (0->1): Test offsets
-		let rotation0to1 = Array.new(10);
-		let rotation0to1[0] = 0; let rotation0to1[1] = 0;
-		let rotation0to1[2] = -2; let rotation0to1[3] = 0;
-		let rotation0to1[4] = 1; let rotation0to1[5] = 0;
-		let rotation0to1[6] = -2; let rotation0to1[7] = -1;
-		let rotation0to1[8] = 1; let rotation0to1[9] = 2;
-		let kickTableI[0] = rotation0to1;
+		let i_0to1 = Array.new(10);
+		let i_0to1[0] = 0; let i_0to1[1] = 0;
+		let i_0to1[2] = -2; let i_0to1[3] = 0;
+		let i_0to1[4] = 1; let i_0to1[5] = 0;
+		let i_0to1[6] = -2; let i_0to1[7] = -1;
+		let i_0to1[8] = 1; let i_0to1[9] = 2;
+		let kickTableI[0] = i_0to1;
 
 		//R->0 (1->0): Reverse 0->1
-		let rotation1to0 = Array.new(10);
-		let rotation1to0[0] = 0; let rotation1to0[1] = 0;
-		let rotation1to0[2] = 2; let rotation1to0[3] = 0;
-		let rotation1to0[4] = -1; let rotation1to0[5] = 0;
-		let rotation1to0[6] = 2; let rotation1to0[7] = 1;
-		let rotation1to0[8] = -1; let rotation1to0[9] = -2;
-		let kickTableI[1] = rotation1to0;
+		let i_1to0 = Array.new(10);
+		let i_1to0[0] = 0; let i_1to0[1] = 0;
+		let i_1to0[2] = 2; let i_1to0[3] = 0;
+		let i_1to0[4] = -1; let i_1to0[5] = 0;
+		let i_1to0[6] = 2; let i_1to0[7] = 1;
+		let i_1to0[8] = -1; let i_1to0[9] = -2;
+		let kickTableI[1] = i_1to0;
 
 		//R->2 (1->2): Test offsets
-		let rotation1to2 = Array.new(10);
-		let rotation1to2[0] = 0; let rotation1to2[1] = 0;
-		let rotation1to2[2] = -1; let rotation1to2[3] = 0;
-		let rotation1to2[4] = 2; let rotation1to2[5] = 0;
-		let rotation1to2[6] = -1; let rotation1to2[7] = 2;
-		let rotation1to2[8] = 2; let rotation1to2[9] = -1;
-		let kickTableI[2] = rotation1to2;
+		let i_1to2 = Array.new(10);
+		let i_1to2[0] = 0; let i_1to2[1] = 0;
+		let i_1to2[2] = -1; let i_1to2[3] = 0;
+		let i_1to2[4] = 2; let i_1to2[5] = 0;
+		let i_1to2[6] = -1; let i_1to2[7] = 2;
+		let i_1to2[8] = 2; let i_1to2[9] = -1;
+		let kickTableI[2] = i_1to2;
 
 		//2->R (2->1): Reverse of 1->2
-		let rotation2to1 = Array.new(10);
-		let rotation2to1[0] = 0; let rotation2to1[1] = 0;
-		let rotation2to1[2] = 1; let rotation2to1[3] = 0;
-		let rotation2to1[4] = -2; let rotation2to1[5] = 0;
-		let rotation2to1[6] = 1; let rotation2to1[7] = -2;
-		let rotation2to1[8] = -2; let rotation2to1[9] = 1;
-		let kickTableI[3] = rotation2to1;
+		let i_2to1 = Array.new(10);
+		let i_2to1[0] = 0; let i_2to1[1] = 0;
+		let i_2to1[2] = 1; let i_2to1[3] = 0;
+		let i_2to1[4] = -2; let i_2to1[5] = 0;
+		let i_2to1[6] = 1; let i_2to1[7] = -2;
+		let i_2to1[8] = -2; let i_2to1[9] = 1;
+		let kickTableI[3] = i_2to1;
 
 		//2->L (2->3): Test offsets
-		let rotation2to3 = Array.new(10);
-		let rotation2to3[0] = 0; let rotation2to3[1] = 0;
-		let rotation2to3[2] = 2; let rotation2to3[3] = 0;
-		let rotation2to3[4] = -1; let rotation2to3[5] = 0;
-		let rotation2to3[6] = 2; let rotation2to3[7] = 1;
-		let rotation2to3[8] = -1; let rotation2to3[9] = -2;
-		let kickTableI[4] = rotation2to3;
+		let i_2to3 = Array.new(10);
+		let i_2to3[0] = 0; let i_2to3[1] = 0;
+		let i_2to3[2] = 2; let i_2to3[3] = 0;
+		let i_2to3[4] = -1; let i_2to3[5] = 0;
+		let i_2to3[6] = 2; let i_2to3[7] = 1;
+		let i_2to3[8] = -1; let i_2to3[9] = -2;
+		let kickTableI[4] = i_2to3;
 
 		//L->2 (3->2): Reverse of 2->3
-		let rotation3to2 = Array.new(10);
-		let rotation3to2[0] = 0; let rotation3to2[1] = 0;
-		let rotation3to2[2] = -2; let rotation3to2[3] = 0;
-		let rotation3to2[4] = 1; let rotation3to2[5] = 0;
-		let rotation3to2[6] = -2; let rotation3to2[7] = -1;
-		let rotation3to2[8] = 1; let rotation3to2[9] = 2;
-		let kickTableI[5] = rotation3to2;
+		let i_3to2 = Array.new(10);
+		let i_3to2[0] = 0; let i_3to2[1] = 0;
+		let i_3to2[2] = -2; let i_3to2[3] = 0;
+		let i_3to2[4] = 1; let i_3to2[5] = 0;
+		let i_3to2[6] = -2; let i_3to2[7] = -1;
+		let i_3to2[8] = 1; let i_3to2[9] = 2;
+		let kickTableI[5] = i_3to2;
 
 		//L->0 (3->0): Test offsets
-		let rotation3to0 = Array.new(10);
-		let rotation3to0[0] = 0; let rotation3to0[1] = 0;
-		let rotation3to0[2] = 1; let rotation3to0[3] = 0;
-		let rotation3to0[4] = -2; let rotation3to0[5] = 0;
-		let rotation3to0[6] = 1; let rotation3to0[7] = -2;
-		let rotation3to0[8] = -2; let rotation3to0[9] = 1;
-		let kickTableI[6] = rotation3to0;
+		let i_3to0 = Array.new(10);
+		let i_3to0[0] = 0; let i_3to0[1] = 0;
+		let i_3to0[2] = 1; let i_3to0[3] = 0;
+		let i_3to0[4] = -2; let i_3to0[5] = 0;
+		let i_3to0[6] = 1; let i_3to0[7] = -2;
+		let i_3to0[8] = -2; let i_3to0[9] = 1;
+		let kickTableI[6] = i_3to0;
 
 		//0->L (0->3): Reverse of 3->0
-		let rotation0to3 = Array.new(10);
-		let rotation0to3[0] = 0; let rotation0to3[1] = 0;
-		let rotation0to3[2] = -1; let rotation0to3[3] = 0;
-		let rotation0to3[4] = 2; let rotation0to3[5] = 0;
-		let rotation0to3[6] = -1; let rotation0to3[7] = 2;
-		let rotation0to3[8] = 2; let rotation0to3[9] = -1;
-		let kickTableI[7] = rotation0to3;
+		let i_0to3 = Array.new(10);
+		let i_0to3[0] = 0; let i_0to3[1] = 0;
+		let i_0to3[2] = -1; let i_0to3[3] = 0;
+		let i_0to3[4] = 2; let i_0to3[5] = 0;
+		let i_0to3[6] = -1; let i_0to3[7] = 2;
+		let i_0to3[8] = 2; let i_0to3[9] = -1;
+		let kickTableI[7] = i_0to3;
 
+		return;
+	}
+
+	method void disposeKickTables() {
+		var int i;
+		var Array kickArray;
+
+		if (~(kickTableJLSTZ = null)) {
+			let i = 0;
+			while (i < 8) {
+				let kickArray = kickTableJLSTZ[i];
+				do kickArray.dispose();
+				let i = i + 1;
+			}
+			do kickTableJLSTZ.dispose();
+		}
+
+		if (~(kickTableI = null)) {
+			let i = 0;
+			while (i < 8) {
+				let kickArray = kickTableI[i];
+				do kickArray.dispose();
+				let i = i + 1;
+			}
+			do kickTableI.dispose();
+		}
 		return;
 	}
 }
