@@ -381,7 +381,6 @@ class Grid {
 
 	method void dispose() {
 		do board.dispose();
-		do disposeKickTables();
 		do Memory.deAlloc(this);
 		return;
 	}
