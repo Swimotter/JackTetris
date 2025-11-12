@@ -35,6 +35,8 @@ class Game {
 
 	field int softDropDistance;
 
+	static boolean debug;
+
 	function void init() {
 		let frameRate = 60;
 		// frameRate / 2
@@ -360,6 +362,11 @@ method void moveBlock(int input, boolean doBlockMovement, boolean doBlockRotatio
 		do updateLevel(linesCleared);
 		do UI.drawCombo(score.getCombo());
 		do UI.drawScore(score.getScore());
+
+		if (debug = true) {
+			do MemoryTracker.displayStats();
+		}
+
 		return;
 	}
 

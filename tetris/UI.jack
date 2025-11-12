@@ -8,12 +8,30 @@ class UI {
 	*
 	* Layout uses the LEFT and RIGHT spaces (196px each)
 	* defined in Grid
+	*
+	* Uses preallocated strings to prevent memory leaks
 	**/
 
 	static int holdBoxX, holdBoxY, holdBoxSize;
 	static int nextBoxX, nextBoxY, nextBoxSize;
+	
+	// Preallocated strings
+	static String scoreLabel;
+	static String levelLabel;
+	static String comboLabel;
+	static String holdLabel;
+	static String nextLabel;
+	static String comboSuffix;
+	static String dashLabel;
+	static String spacesLabel;
+	static boolean initialized;
 
 	function void init() {
+		if (initialized) {
+			return;  // Already initialized
+		}
+		
+		//box positions
 		let holdBoxX = 15;
 		let holdBoxY = 120;
 		let holdBoxSize = 60;
@@ -21,24 +39,63 @@ class UI {
 		let nextBoxX = 360;
 		let nextBoxY = 30;
 		let nextBoxSize = 80;
+		
+		//allocate strings once
+		let scoreLabel = String.new(7);
+		let levelLabel = String.new(7);
+		let comboLabel = String.new(7);
+		let holdLabel = String.new(4);
+		let nextLabel = String.new(4);
+		let comboSuffix = String.new(1);
+		let dashLabel = String.new(1);
+		let spacesLabel = String.new(2);
+		
+		//build labels
+		do UI.buildString(scoreLabel, "SCORE: ");
+		do UI.buildString(levelLabel, "LEVEL: ");
+		do UI.buildString(comboLabel, "COMBO: ");
+		do UI.buildString(holdLabel, "HOLD");
+		do UI.buildString(nextLabel, "NEXT");
+		do UI.buildString(comboSuffix, "x");
+		do UI.buildString(dashLabel, "-");
+		do UI.buildString(spacesLabel, "  ");
+		
+		let initialized = true;
+		return;
+	}
+	
+	/** Helper: Build a string from a literal */
+	function void buildString(String dest, String source) {
+		var int i, len;
+		var char c;
+		
+		let len = source.length();
+		let i = 0;
+		
+		while (i < len) {
+			let c = source.charAt(i);
+			do dest.appendChar(c);
+			let i = i + 1;
+		}
+		
 		return;
 	}
 
 	function void drawScoreText() {
 		do Output.moveCursor(4, 1);
-		do Output.printString("SCORE: ");
+		do Output.printString(scoreLabel);
 		return;
 	}
 
 	function void drawLevelText() {
 		do Output.moveCursor(6, 1);
-		do Output.printString("LEVEL: ");
+		do Output.printString(levelLabel);
 		return;
 	}
 
 	function void drawComboText() {
 		do Output.moveCursor(8, 1);
-		do Output.printString("COMBO: ");
+		do Output.printString(comboLabel);
 		return;
 	}
 
@@ -52,7 +109,7 @@ class UI {
 
 		//draw label
 		do Output.moveCursor(10, 1);
-		do Output.printString("HOLD");
+		do Output.printString(holdLabel);
 		return;
 	}
 
@@ -66,7 +123,7 @@ class UI {
 
 		//draw label
 		do Output.moveCursor(2, 46);
-		do Output.printString("NEXT");
+		do Output.printString(nextLabel);
 		return;
 	}
 
@@ -149,11 +206,11 @@ class UI {
 		do Output.moveCursor(8, 7);
 		if (combo > 0) {
 			do Output.printInt(combo);
-			do Output.printString("x");
+			do Output.printString(comboSuffix);
 		} else {
-			do Output.printString("  ");
+			do Output.printString(spacesLabel);
 			do Output.moveCursor(8, 7);
-			do Output.printString("-");
+			do Output.printString(dashLabel);
 		}
 		return;
 	}
@@ -185,6 +242,25 @@ class UI {
 		let zeroScore = BigInt.new();
 		do UI.drawScore(zeroScore);
 		do zeroScore.dispose();
+		return;
+	}
+	
+	/** Dispose all preallocated strings - call on app exit */
+	function void dispose() {
+		if (~initialized) {
+			return;
+		}
+		
+		do scoreLabel.dispose();
+		do levelLabel.dispose();
+		do comboLabel.dispose();
+		do holdLabel.dispose();
+		do nextLabel.dispose();
+		do comboSuffix.dispose();
+		do dashLabel.dispose();
+		do spacesLabel.dispose();
+		
+		let initialized = false;
 		return;
 	}
 }
