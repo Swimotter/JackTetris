@@ -8,8 +8,10 @@ class BigInt {
     field Array digits;
     field int numDigits;
     field int capacity;
+    static int allocCount;
 
     constructor BigInt new() {
+        let allocCount = allocCount + 1;
         let capacity = 10;
         let digits = Array.new(capacity);
         let numDigits = 1;
@@ -109,8 +111,13 @@ class BigInt {
         return numDigits;
     }
 
+    function int getAllocCount() {
+        return allocCount;
+    }
+
     method void dispose() {
         do digits.dispose();
+        let allocCount = allocCount - 1;
         do Memory.deAlloc(this);
         return;
     }

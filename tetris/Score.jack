@@ -14,10 +14,13 @@ class Score {
 	* - Tetris: 800 * level
 	**/
 
+	static int allocCount;
+
 	field BigInt score;
 	field int combo;
 
 	constructor Score new() {
+		let allocCount = allocCount + 1;
 		let score = BigInt.new();
 		let combo = 0;
 		return this;
@@ -97,8 +100,13 @@ class Score {
 		return combo;
 	}
 
+	function int getAllocCount() {
+		return allocCount;
+	}
+
 	method void dispose() {
 		do score.dispose();
+		let allocCount = allocCount - 1;
 		do Memory.deAlloc(this);
 		return;
 	}

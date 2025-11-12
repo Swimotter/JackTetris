@@ -19,6 +19,8 @@ class Grid {
 	Grid size = 10x20 cells
 	**/
 
+	static int allocCount;
+
 	static int cellSize;
 	static int offsetX, offsetY;
 
@@ -35,11 +37,14 @@ class Grid {
 		let  offsetX = 195; // (512 - (10*12)) / 2 = 196
 		let  offsetY = 7; // (256 - (20*12)) / 2 = 8
 
+		let allocCount = 0;
+
 		do Grid.initKickTables();
 		return;
 	}
 
 	constructor Grid new(int w, int h) {
+		let allocCount = allocCount + 1;
 		let width = w;
 		let height = h;
 		let board = Array.new(width * height);
@@ -379,8 +384,13 @@ class Grid {
 		return offsetY;
 	}
 
+	function int getAllocCount() {
+		return allocCount;
+	}
+
 	method void dispose() {
 		do board.dispose();
+		let allocCount = allocCount - 1;
 		do Memory.deAlloc(this);
 		return;
 	}

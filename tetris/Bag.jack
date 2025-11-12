@@ -14,8 +14,10 @@ class Bag {
 	field int bagIndex;
 	field int seed;
 	field boolean hasNextBag;
+	static int allocCount;
 
 	constructor Bag new(int initSeed) {
+		let allocCount = allocCount + 1;
 		let seed = initSeed;
 		let bagIndex = 7; //force initial bag fill
 		let hasNextBag = false;
@@ -90,11 +92,16 @@ class Bag {
 		return blockType;
 	}
 
+	function int getAllocCount() {
+		return allocCount;
+	}
+
 	method void dispose() {
 		do currentBag.dispose(); //dispose of array
 
 		do nextBag.dispose(); //dispose of array
 
+		let allocCount = allocCount - 1;
 		do Memory.deAlloc(this); //dispose of bag object
 		return;
 	}
