@@ -1,0 +1,39 @@
+// MemoryTracker.jack - Display aggregator only
+class MemoryTracker {
+	/**
+	* Aggregates and displays memory statistics from all tracked classes
+	* Each class maintains its own allocation counter
+	**/
+	
+	// Display memory stats by querying each class
+	function void displayStats() {
+		do Output.moveCursor(14, 1);
+		do Output.printString("MEMORY DEBUG:");
+		
+		do Output.moveCursor(15, 1);
+		do Output.printString("Blocks: ");
+		do Output.printInt(Blocks.getAllocCount());
+		
+		do Output.moveCursor(16, 1);
+		do Output.printString("BigInt: ");
+		do Output.printInt(BigInt.getAllocCount());
+		
+		do Output.moveCursor(17, 1);
+		do Output.printString("Bags:   ");
+		do Output.printInt(Bag.getAllocCount());
+		
+		do Output.moveCursor(18, 1);
+		do Output.printString("Grids:  ");
+		do Output.printInt(Grid.getAllocCount());
+		
+		do Output.moveCursor(19, 1);
+		do Output.printString("Holds:  ");
+		do Output.printInt(Hold.getAllocCount());
+		
+		do Output.moveCursor(20, 1);
+		do Output.printString("Scores: ");
+		do Output.printInt(Score.getAllocCount());
+		
+		return;
+	}
+}

@@ -12,6 +12,7 @@ class Blocks {
 	**/
 
 	static int I, J, L, O, S, T, Z;
+	static int allocCount;
 
 	//block states
 	field int type;
@@ -27,10 +28,12 @@ class Blocks {
 		let S = 4;
 		let T = 5;
 		let Z = 6;
+		let allocCount = 0;
 		return;
 	}
 
 	constructor Blocks new(int blockType) {
+		let allocCount = allocCount + 1;
 		let type = blockType;
 		let rotation = 0;
 		let x = 3; //start at top-center
@@ -419,6 +422,10 @@ class Blocks {
 		return rotations[rotation];
 	}
 
+	function int getAllocCount() {
+		return allocCount;
+	}
+
 	method void dispose() {
 		var int i;
 		var Array rot;
@@ -436,6 +443,7 @@ class Blocks {
 		}
 
 		do rotations.dispose();
+		let allocCount = allocCount - 1;
 		do Memory.deAlloc(this);
 		return;
 	}

@@ -9,10 +9,13 @@ class Hold {
 	* - Visual display in hold box
 	**/
 
+	static int allocCount;
+
 	field Blocks heldBlock;
 	field boolean canSwap;
 
 	constructor Hold new() {
+		let allocCount = allocCount + 1;
 		let heldBlock = null;
 		let canSwap = true;
 		return this;
@@ -82,10 +85,16 @@ class Hold {
 		return heldBlock.getType();
 	}
 
+	function int getAllocCount() {
+		return allocCount;
+	}
+
 	method void dispose() {
 		if (~(heldBlock = null)) {
 			do heldBlock.dispose();
 		}
+
+		let allocCount = allocCount - 1;
 		do Memory.deAlloc(this);
 		return;
 	}
