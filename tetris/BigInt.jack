@@ -1,8 +1,9 @@
 class BigInt {
     /**
-    *Multi-digit integer system for numbers that exceed 32,767
-    *Stores number as array of digits (base 10)
-    *Supports addition and display 
+    * Multi-digit integer system for numbers that exceed 32,767
+    * Stores number as array of digits (base 10)
+    * Supports addition and display 
+    * NO MEMORY LEAKS - uses direct character output
     **/
 
     field Array digits;
@@ -63,10 +64,14 @@ class BigInt {
         return;
     }
 
-    //print number at current cursor position
+    /**
+     * Print number at current cursor position
+     * NO MEMORY LEAK - outputs characters directly without creating Strings
+     */
     method void print() {
         var int i;
         var boolean leadingZero;
+        var char digitChar;
 
         let leadingZero = true;
         let i = numDigits - 1;
@@ -79,7 +84,10 @@ class BigInt {
             }
 
             if (~leadingZero) {
-                do Output.printInt(digits[i]);
+                // Convert digit to character and print directly
+                // ASCII '0' is 48, so '0' + digit gives the correct character
+                let digitChar = 48 + digits[i];
+                do Output.printChar(digitChar);
             }
 
             let i = i - 1;

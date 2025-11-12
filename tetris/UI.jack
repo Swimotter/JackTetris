@@ -6,16 +6,13 @@ class UI {
 	* - Hold piece box
 	* - Next piece preview box
 	*
-	* Layout uses the LEFT and RIGHT spaces (196px each)
-	* defined in Grid
-	*
-	* Uses preallocated strings to prevent memory leaks
+	* Uses character-by-character string building to eliminate ALL memory leaks
 	**/
 
 	static int holdBoxX, holdBoxY, holdBoxSize;
 	static int nextBoxX, nextBoxY, nextBoxSize;
 	
-	// Preallocated strings
+	//preallocated strings
 	static String scoreLabel;
 	static String levelLabel;
 	static String comboLabel;
@@ -24,11 +21,12 @@ class UI {
 	static String comboSuffix;
 	static String dashLabel;
 	static String spacesLabel;
+	static String intBuffer;
 	static boolean initialized;
 
 	function void init() {
 		if (initialized) {
-			return;  // Already initialized
+			return;
 		}
 		
 		//box positions
@@ -40,7 +38,7 @@ class UI {
 		let nextBoxY = 30;
 		let nextBoxSize = 80;
 		
-		//allocate strings once
+		//allocate strings
 		let scoreLabel = String.new(7);
 		let levelLabel = String.new(7);
 		let comboLabel = String.new(7);
@@ -49,36 +47,105 @@ class UI {
 		let comboSuffix = String.new(1);
 		let dashLabel = String.new(1);
 		let spacesLabel = String.new(2);
+		let intBuffer = String.new(12);
 		
-		//build labels
-		do UI.buildString(scoreLabel, "SCORE: ");
-		do UI.buildString(levelLabel, "LEVEL: ");
-		do UI.buildString(comboLabel, "COMBO: ");
-		do UI.buildString(holdLabel, "HOLD");
-		do UI.buildString(nextLabel, "NEXT");
-		do UI.buildString(comboSuffix, "x");
-		do UI.buildString(dashLabel, "-");
-		do UI.buildString(spacesLabel, "  ");
+		//build strings CHARACTER BY CHARACTER (no string literals!)
+		// "SCORE: "
+		do scoreLabel.appendChar(83);   // S
+		do scoreLabel.appendChar(67);   // C
+		do scoreLabel.appendChar(79);   // O
+		do scoreLabel.appendChar(82);   // R
+		do scoreLabel.appendChar(69);   // E
+		do scoreLabel.appendChar(58);   // :
+		do scoreLabel.appendChar(32);   // space
+		
+		// "LEVEL: "
+		do levelLabel.appendChar(76);   // L
+		do levelLabel.appendChar(69);   // E
+		do levelLabel.appendChar(86);   // V
+		do levelLabel.appendChar(69);   // E
+		do levelLabel.appendChar(76);   // L
+		do levelLabel.appendChar(58);   // :
+		do levelLabel.appendChar(32);   // space
+		
+		// "COMBO: "
+		do comboLabel.appendChar(67);   // C
+		do comboLabel.appendChar(79);   // O
+		do comboLabel.appendChar(77);   // M
+		do comboLabel.appendChar(66);   // B
+		do comboLabel.appendChar(79);   // O
+		do comboLabel.appendChar(58);   // :
+		do comboLabel.appendChar(32);   // space
+		
+		// "HOLD"
+		do holdLabel.appendChar(72);    // H
+		do holdLabel.appendChar(79);    // O
+		do holdLabel.appendChar(76);    // L
+		do holdLabel.appendChar(68);    // D
+		
+		// "NEXT"
+		do nextLabel.appendChar(78);    // N
+		do nextLabel.appendChar(69);    // E
+		do nextLabel.appendChar(88);    // X
+		do nextLabel.appendChar(84);    // T
+		
+		// "x"
+		do comboSuffix.appendChar(120); // x
+		
+		// "-"
+		do dashLabel.appendChar(45);    // -
+		
+		// "  " (two spaces)
+		do spacesLabel.appendChar(32);  // space
+		do spacesLabel.appendChar(32);  // space
 		
 		let initialized = true;
 		return;
 	}
 	
-	/** Helper: Build a string from a literal */
-	function void buildString(String dest, String source) {
-		var int i, len;
-		var char c;
+	/** 
+	 * Print an integer using the reusable buffer (no memory leak)
+	 * Returns the string representation in intBuffer
+	 */
+	function String intToString(int value) {
+		var int divisor, digit, temp;
+		var boolean started;
 		
-		let len = source.length();
-		let i = 0;
-		
-		while (i < len) {
-			let c = source.charAt(i);
-			do dest.appendChar(c);
-			let i = i + 1;
+		//clear buffer
+		while (intBuffer.length() > 0) {
+			do intBuffer.eraseLastChar();
 		}
 		
-		return;
+		//handle negative
+		if (value < 0) {
+			do intBuffer.appendChar(45);  // '-'
+			let value = -value;
+		}
+		
+		//handle zero
+		if (value = 0) {
+			do intBuffer.appendChar(48);  // '0'
+			return intBuffer;
+		}
+		
+		//build digits
+		let divisor = 10000;
+		let started = false;
+		
+		while (divisor > 0) {
+			let digit = value / divisor;
+			
+			if ((digit > 0) | started) {
+				do intBuffer.appendChar(48 + digit);
+				let started = true;
+			}
+			
+			let temp = digit * divisor;
+			let value = value - temp;
+			let divisor = divisor / 10;
+		}
+		
+		return intBuffer;
 	}
 
 	function void drawScoreText() {
@@ -99,40 +166,32 @@ class UI {
 		return;
 	}
 
-	//draw hold box with piece preview
 	function void drawHoldBox() {
-		//draw hold box border
 		do Screen.setColor(true);
 		do Screen.drawRectangle(holdBoxX, holdBoxY, holdBoxX + holdBoxSize, holdBoxY + holdBoxSize);
 		do Screen.setColor(false);
 		do Screen.drawRectangle(holdBoxX + 2, holdBoxY + 2, holdBoxX + holdBoxSize - 2, holdBoxY + holdBoxSize - 2);
 
-		//draw label
 		do Output.moveCursor(10, 1);
 		do Output.printString(holdLabel);
 		return;
 	}
 
-	//draw next piece preview box
 	function void drawNextBox() {
-		//draw next box border
 		do Screen.setColor(true);
 		do Screen.drawRectangle(nextBoxX, nextBoxY, nextBoxX + nextBoxSize, nextBoxY + nextBoxSize);
 		do Screen.setColor(false);
 		do Screen.drawRectangle(nextBoxX + 2, nextBoxY + 2, nextBoxX + nextBoxSize - 2, nextBoxY + nextBoxSize - 2);
 
-		//draw label
 		do Output.moveCursor(2, 46);
 		do Output.printString(nextLabel);
 		return;
 	}
 
 	function void drawHoldPiece(Blocks heldBlock) {
-		//clear hold area
 		do Screen.setColor(false);
 		do Screen.drawRectangle(holdBoxX + 2, holdBoxY + 2, holdBoxX + holdBoxSize - 2, holdBoxY + holdBoxSize - 2);
 
-		//only draw if there is a held piece
 		if (~(heldBlock = null)) {
 			do UI.drawPreviewPiece(heldBlock, holdBoxX + 10, holdBoxY + 20, 8);
 		}
@@ -140,18 +199,15 @@ class UI {
 	}
 
 	function void drawNextPiece(Blocks nextBlock) {
-		//clear next piece area
 		do Screen.setColor(false);
 		do Screen.drawRectangle(nextBoxX + 2, nextBoxY + 2, nextBoxX + nextBoxSize - 2, nextBoxY + nextBoxSize - 2);
 
-		//only draw if there is a next piece
 		if (~(nextBlock = null)) {
 			do UI.drawPreviewPiece(nextBlock, nextBoxX + 10, nextBoxY + 20, 8);
 		}
 		return;
 	}
 
-	//draw a preview of a piece (smaller, centered in box)
 	function void drawPreviewPiece(Blocks block, int offsetX, int offsetY, int cellSize) {
 		var Array shape;
 		var int i, cellX, cellY;
@@ -179,7 +235,6 @@ class UI {
 	}
 
 	function void drawScore(BigInt score) {
-		//clear score area
 		do Screen.setColor(false);
 		do Screen.drawRectangle(42,24,180,32);
 
@@ -189,23 +244,27 @@ class UI {
 	}
 
 	function void drawLevel(int level) {
-		//clear level area
+		var String levelStr;
+		
 		do Screen.setColor(false);
 		do Screen.drawRectangle(42, 40, 180, 48);
 
 		do Output.moveCursor(6, 7);
-		do Output.printInt(level);
+		let levelStr = UI.intToString(level);
+		do Output.printString(levelStr);
 		return;
 	}
 
 	function void drawCombo(int combo) {
-		//clear combo area
+		var String comboStr;
+		
 		do Screen.setColor(false);
 		do Screen.drawRectangle(42, 56, 180, 64);
 
 		do Output.moveCursor(8, 7);
 		if (combo > 0) {
-			do Output.printInt(combo);
+			let comboStr = UI.intToString(combo);
+			do Output.printString(comboStr);
 			do Output.printString(comboSuffix);
 		} else {
 			do Output.printString(spacesLabel);
@@ -215,7 +274,6 @@ class UI {
 		return;
 	}
 
-	//clear ui regions
 	function void clearHoldArea() {
 		do Screen.setColor(false);
 		do Screen.drawRectangle(10, 115, 90, 195);
@@ -228,7 +286,6 @@ class UI {
 		return;
 	}
 
-	//draw all static ui elements
 	function void drawAll() {
 		var BigInt zeroScore;
 
@@ -238,14 +295,12 @@ class UI {
 		do UI.drawLevelText();
 		do UI.drawComboText();
 
-		//create temp BigInt with value 0 and dispose after use
 		let zeroScore = BigInt.new();
 		do UI.drawScore(zeroScore);
 		do zeroScore.dispose();
 		return;
 	}
 	
-	/** Dispose all preallocated strings - call on app exit */
 	function void dispose() {
 		if (~initialized) {
 			return;
@@ -259,6 +314,7 @@ class UI {
 		do comboSuffix.dispose();
 		do dashLabel.dispose();
 		do spacesLabel.dispose();
+		do intBuffer.dispose();
 		
 		let initialized = false;
 		return;

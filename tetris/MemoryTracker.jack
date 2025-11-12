@@ -14,15 +14,16 @@ class MemoryTracker {
     static String gridsLabel;
     static String holdsLabel;
     static String scoresLabel;
+    static String intBuffer;
     static boolean initialized;
 
     /** Initialize static string pool - call once at app start */
     function void init() {
         if (initialized) {
-            return;  // Already initialized
+            return;  //already initialized
         }
         
-        // Allocate strings with exact sizes needed
+        //allocate strings with exact sizes needed
         let titleLabel = String.new(13);
         let blocksLabel = String.new(8);
         let bigintLabel = String.new(8);
@@ -30,8 +31,9 @@ class MemoryTracker {
         let gridsLabel = String.new(8);
         let holdsLabel = String.new(8);
         let scoresLabel = String.new(8);
+        let intBuffer = String.new(12);  // Max int is -32768
         
-        // Build the labels once - these never change
+        //build the labels once - these never change
         do MemoryTracker.buildString(titleLabel, "MEMORY DEBUG:");
         do MemoryTracker.buildString(blocksLabel, "Blocks: ");
         do MemoryTracker.buildString(bigintLabel, "BigInt: ");
@@ -65,41 +67,94 @@ class MemoryTracker {
         return;
     }
     
+    /** 
+     * Convert integer to string using reusable buffer (no memory leak)
+     * Returns the string representation in intBuffer
+     */
+    function String intToString(int value) {
+        var int divisor, digit, temp;
+        var boolean started;
+        
+        //clear buffer by using eraseLastChar until empty
+        while (intBuffer.length() > 0) {
+            do intBuffer.eraseLastChar();
+        }
+        
+        //handle negative
+        if (value < 0) {
+            do intBuffer.appendChar(45);  // '-'
+            let value = -value;
+        }
+        
+        //handle zero
+        if (value = 0) {
+            do intBuffer.appendChar(48);  // '0'
+            return intBuffer;
+        }
+        
+        //build digits (max value is 32767, so 10000 is enough)
+        let divisor = 10000;
+        let started = false;
+        
+        while (divisor > 0) {
+            let digit = value / divisor;
+            
+            if ((digit > 0) | started) {
+                do intBuffer.appendChar(48 + digit);  // '0' + digit
+                let started = true;
+            }
+            
+            let temp = digit * divisor;
+            let value = value - temp;
+            let divisor = divisor / 10;
+        }
+        
+        return intBuffer;
+    }
+    
     /** Display memory stats by querying each class - NO NEW ALLOCATIONS */
     function void displayStats() {
-        // Display title
+        var String countStr;
+        
+        //display title
         do Output.moveCursor(14, 1);
         do Output.printString(titleLabel);
         
-        // Display Blocks count
+        //display Blocks count
         do Output.moveCursor(15, 1);
         do Output.printString(blocksLabel);
-        do Output.printInt(Blocks.getAllocCount());
+        let countStr = MemoryTracker.intToString(Blocks.getAllocCount());
+        do Output.printString(countStr);
         
-        // Display BigInt count
+        //display BigInt count
         do Output.moveCursor(16, 1);
         do Output.printString(bigintLabel);
-        do Output.printInt(BigInt.getAllocCount());
+        let countStr = MemoryTracker.intToString(BigInt.getAllocCount());
+        do Output.printString(countStr);
         
-        // Display Bags count
+        //display Bags count
         do Output.moveCursor(17, 1);
         do Output.printString(bagsLabel);
-        do Output.printInt(Bag.getAllocCount());
+        let countStr = MemoryTracker.intToString(Bag.getAllocCount());
+        do Output.printString(countStr);
         
-        // Display Grids count
+        //display Grids count
         do Output.moveCursor(18, 1);
         do Output.printString(gridsLabel);
-        do Output.printInt(Grid.getAllocCount());
+        let countStr = MemoryTracker.intToString(Grid.getAllocCount());
+        do Output.printString(countStr);
         
-        // Display Holds count
+        //display Holds count
         do Output.moveCursor(19, 1);
         do Output.printString(holdsLabel);
-        do Output.printInt(Hold.getAllocCount());
+        let countStr = MemoryTracker.intToString(Hold.getAllocCount());
+        do Output.printString(countStr);
         
-        // Display Scores count
+        //display Scores count
         do Output.moveCursor(20, 1);
         do Output.printString(scoresLabel);
-        do Output.printInt(Score.getAllocCount());
+        let countStr = MemoryTracker.intToString(Score.getAllocCount());
+        do Output.printString(countStr);
         
         return;
     }
@@ -107,7 +162,7 @@ class MemoryTracker {
     /** Dispose all preallocated strings - call on app exit */
     function void dispose() {
         if (~initialized) {
-            return;  // Nothing to dispose
+            return;  //nothing to dispose
         }
         
         do titleLabel.dispose();
@@ -117,6 +172,7 @@ class MemoryTracker {
         do gridsLabel.dispose();
         do holdsLabel.dispose();
         do scoresLabel.dispose();
+        do intBuffer.dispose();
         
         let initialized = false;
         return;
