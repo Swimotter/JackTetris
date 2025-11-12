@@ -26,6 +26,9 @@ class Hold {
 			return currentBlock;
 		}
 
+		do currentBlock.setPosition(3, 0); //reset position
+		do currentBlock.setRotation(0);
+
 		//first hold - store piece and signal new piece to be spawned
 		if (heldBlock = null) {
 			let heldBlock = currentBlock;
@@ -36,10 +39,10 @@ class Hold {
 		//swap held and current pieces
 		let temp = heldBlock;
 		let heldBlock = currentBlock;
-		do heldBlock.setRotation(0);
 		let canSwap = false;
 
 		do temp.setPosition(3, 0); //reset position
+		do temp.setRotation(0);
 		return temp;
 	}
 
