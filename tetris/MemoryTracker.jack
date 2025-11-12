@@ -1,39 +1,124 @@
-// MemoryTracker.jack - Display aggregator only
+// MemoryTracker.jack - Display aggregator with preallocated strings
 class MemoryTracker {
-	/**
-	* Aggregates and displays memory statistics from all tracked classes
-	* Each class maintains its own allocation counter
-	**/
-	
-	// Display memory stats by querying each class
-	function void displayStats() {
-		do Output.moveCursor(14, 1);
-		do Output.printString("MEMORY DEBUG:");
-		
-		do Output.moveCursor(15, 1);
-		do Output.printString("Blocks: ");
-		do Output.printInt(Blocks.getAllocCount());
-		
-		do Output.moveCursor(16, 1);
-		do Output.printString("BigInt: ");
-		do Output.printInt(BigInt.getAllocCount());
-		
-		do Output.moveCursor(17, 1);
-		do Output.printString("Bags:   ");
-		do Output.printInt(Bag.getAllocCount());
-		
-		do Output.moveCursor(18, 1);
-		do Output.printString("Grids:  ");
-		do Output.printInt(Grid.getAllocCount());
-		
-		do Output.moveCursor(19, 1);
-		do Output.printString("Holds:  ");
-		do Output.printInt(Hold.getAllocCount());
-		
-		do Output.moveCursor(20, 1);
-		do Output.printString("Scores: ");
-		do Output.printInt(Score.getAllocCount());
-		
-		return;
-	}
+    /**
+     * Aggregates and displays memory statistics from all tracked classes
+     * Each class maintains its own allocation counter
+     * Uses preallocated strings to prevent memory leaks
+     **/
+
+    // Static preallocated strings (shared across all uses)
+    static String titleLabel;
+    static String blocksLabel;
+    static String bigintLabel;
+    static String bagsLabel;
+    static String gridsLabel;
+    static String holdsLabel;
+    static String scoresLabel;
+    static boolean initialized;
+
+    /** Initialize static string pool - call once at app start */
+    function void init() {
+        if (initialized) {
+            return;  // Already initialized
+        }
+        
+        // Allocate strings with exact sizes needed
+        let titleLabel = String.new(13);
+        let blocksLabel = String.new(8);
+        let bigintLabel = String.new(8);
+        let bagsLabel = String.new(8);
+        let gridsLabel = String.new(8);
+        let holdsLabel = String.new(8);
+        let scoresLabel = String.new(8);
+        
+        // Build the labels once - these never change
+        do MemoryTracker.buildString(titleLabel, "MEMORY DEBUG:");
+        do MemoryTracker.buildString(blocksLabel, "Blocks: ");
+        do MemoryTracker.buildString(bigintLabel, "BigInt: ");
+        do MemoryTracker.buildString(bagsLabel, "Bags:   ");
+        do MemoryTracker.buildString(gridsLabel, "Grids:  ");
+        do MemoryTracker.buildString(holdsLabel, "Holds:  ");
+        do MemoryTracker.buildString(scoresLabel, "Scores: ");
+        
+        let initialized = true;
+        return;
+    }
+    
+    /** 
+     * Helper: Build a string from a literal (copies characters) 
+     * WARNING: This creates a temporary string that leaks!
+     * Only call this during initialization, not in hot loops
+     */
+    function void buildString(String dest, String source) {
+        var int i, len;
+        var char c;
+        
+        let len = source.length();
+        let i = 0;
+        
+        while (i < len) {
+            let c = source.charAt(i);
+            do dest.appendChar(c);
+            let i = i + 1;
+        }
+        
+        return;
+    }
+    
+    /** Display memory stats by querying each class - NO NEW ALLOCATIONS */
+    function void displayStats() {
+        // Display title
+        do Output.moveCursor(14, 1);
+        do Output.printString(titleLabel);
+        
+        // Display Blocks count
+        do Output.moveCursor(15, 1);
+        do Output.printString(blocksLabel);
+        do Output.printInt(Blocks.getAllocCount());
+        
+        // Display BigInt count
+        do Output.moveCursor(16, 1);
+        do Output.printString(bigintLabel);
+        do Output.printInt(BigInt.getAllocCount());
+        
+        // Display Bags count
+        do Output.moveCursor(17, 1);
+        do Output.printString(bagsLabel);
+        do Output.printInt(Bag.getAllocCount());
+        
+        // Display Grids count
+        do Output.moveCursor(18, 1);
+        do Output.printString(gridsLabel);
+        do Output.printInt(Grid.getAllocCount());
+        
+        // Display Holds count
+        do Output.moveCursor(19, 1);
+        do Output.printString(holdsLabel);
+        do Output.printInt(Hold.getAllocCount());
+        
+        // Display Scores count
+        do Output.moveCursor(20, 1);
+        do Output.printString(scoresLabel);
+        do Output.printInt(Score.getAllocCount());
+        
+        return;
+    }
+    
+    /** Dispose all preallocated strings - call on app exit */
+    function void dispose() {
+        if (~initialized) {
+            return;  // Nothing to dispose
+        }
+        
+        do titleLabel.dispose();
+        do blocksLabel.dispose();
+        do bigintLabel.dispose();
+        do bagsLabel.dispose();
+        do gridsLabel.dispose();
+        do holdsLabel.dispose();
+        do scoresLabel.dispose();
+        
+        let initialized = false;
+        return;
+    }
 }

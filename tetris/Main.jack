@@ -6,6 +6,7 @@ class Main {
 		var char c;
 		// Time in milliseconds
 		var int frameTime;
+		do MemoryTracker.init();
 
 		let playing = true;
 		// 1/60th of a second
