@@ -18,7 +18,7 @@ class BigInt {
     }
 
     method void add(int value) {
-        var int carry, i, sum;
+        var int carry, i, sum, digit;
         var int digitValue;
 
         if (value < 0) {
@@ -30,10 +30,11 @@ class BigInt {
 
         //add value digit by digit
         while ((carry > 0) | (i < numDigits)) {
+            let digit = carry - ((carry / 10) * 10); //carry % 10
             if (i < numDigits) {
-                let sum = digits[i] + (carry - ((carry / 10) * 10)); //carry % 10
+                let sum = digits[i] + digit;
             } else {
-                let sum = carry - ((carry / 10) * 10);
+                let sum = digit;
             }
 
             let carry = carry / 10;
